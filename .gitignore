@@ -1,0 +1,11 @@
+﻿Bc.Battleships/.vs
+Bc.Battleships/Bc.Battleships.Domain/bin
+Bc.Battleships/Bc.Battleships.IntegrationTests/bin
+Bc.Battleships/Bc.Battleships.Persistence/bin
+Bc.Battleships/Bc.Battleships.UnitTests.Domain/bin
+Bc.Battleships/Bc.Battleships.EFMigrationsHelper/bin
+Bc.Battleships/Bc.Battleships.Domain/obj
+Bc.Battleships/Bc.Battleships.IntegrationTests/obj
+Bc.Battleships/Bc.Battleships.Persistence/obj
+Bc.Battleships/Bc.Battleships.UnitTests.Domain/obj
+Bc.Battleships/Bc.Battleships.EFMigrationsHelper/obj

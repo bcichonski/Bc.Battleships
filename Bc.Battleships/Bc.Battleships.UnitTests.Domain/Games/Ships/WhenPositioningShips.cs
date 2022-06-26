@@ -15,9 +15,9 @@ namespace Bc.Battleships.UnitTests.Domain.Games.Ships
         public void ShouldPositionShipHorizontaly()
         {
             var ship = new ShipBuilder()
-                .WithCoordinates(new Coordinates(1, 1))
+                .WithCoordinates(1, 1)
                 .WithLayout(ShipLayout.Horizontal)
-                .WithLength(new Length(3))
+                .WithLength(3)
                 .Build();
 
             ship.Compartments.Select(x => x.Coordinates.X).Should().BeEquivalentTo(new[] { 1, 2, 3 });
@@ -28,9 +28,9 @@ namespace Bc.Battleships.UnitTests.Domain.Games.Ships
         public void ShouldPositionShipVertically()
         {
             var ship = new ShipBuilder()
-                .WithCoordinates(new Coordinates(1, 1))
+                .WithCoordinates(1, 1)
                 .WithLayout(ShipLayout.Vertical)
-                .WithLength(new Length(3))
+                .WithLength(3)
                 .Build();
 
             ship.Compartments.Select(x => x.Coordinates.Y).Should().BeEquivalentTo(new[] { 1, 2, 3 });
@@ -58,26 +58,26 @@ namespace Bc.Battleships.UnitTests.Domain.Games.Ships
                 new object[] {
                     new ShipBuilder()
                         .WithLayout(ShipLayout.Horizontal)
-                        .WithCoordinates(new Coordinates(1,1))
-                        .WithLength(new Length(3))
+                        .WithCoordinates(1,1)
+                        .WithLength(3)
                         .Build(),
                     new ShipBuilder()
                         .WithLayout(ShipLayout.Horizontal)
-                        .WithCoordinates(new Coordinates(1,2))
-                        .WithLength(new Length(3))
+                        .WithCoordinates(1,2)
+                        .WithLength(3)
                         .Build(),
                     false
                 },
                 new object[] {
                     new ShipBuilder()
                         .WithLayout(ShipLayout.Horizontal)
-                        .WithCoordinates(new Coordinates(1,2))
-                        .WithLength(new Length(3))
+                        .WithCoordinates(1,2)
+                        .WithLength(3)
                         .Build(),
                     new ShipBuilder()
                         .WithLayout(ShipLayout.Vertical)
-                        .WithCoordinates(new Coordinates(2,1))
-                        .WithLength(new Length(3))
+                        .WithCoordinates(2,1)
+                        .WithLength(3)
                         .Build(),
                     true
                 },

@@ -17,6 +17,12 @@ namespace Bc.Battleships.UnitTests.Domain.Builders
             return this;
         }
 
+        public ShipBuilder WithCoordinates(int x, int y)
+        {
+            _coordinates = new Coordinates(x, y);
+            return this;
+        }
+
         public ShipBuilder WithLayout(ShipLayout layout)
         {
             _layout = layout;
@@ -26,6 +32,12 @@ namespace Bc.Battleships.UnitTests.Domain.Builders
         public ShipBuilder WithLength(Length length)
         {
             _length = length;
+            return this;
+        }
+
+        public ShipBuilder WithLength(int length)
+        {
+            _length = new Length(length);
             return this;
         }
 

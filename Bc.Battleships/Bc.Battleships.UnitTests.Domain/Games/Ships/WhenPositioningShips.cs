@@ -4,12 +4,39 @@ using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Domain.ValueObjects.Enums;
 using Bc.Battleships.UnitTests.Domain.Builders;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Bc.Battleships.UnitTests.Domain.Games.Ships
 {
     public class WhenPositioningShips
     {
+        [Fact]
+        public void ShouldPositionShipHorizontaly()
+        {
+            var ship = new ShipBuilder()
+                .WithCoordinates(new Coordinates(1, 1))
+                .WithLayout(ShipLayout.Horizontal)
+                .WithLength(new Length(3))
+                .Build();
+
+            ship.Compartments.Select(x => x.Coordinates.X).Should().BeEquivalentTo(new[] { 1, 2, 3 });
+            ship.Compartments.Select(x => x.Coordinates.Y).Should().AllSatisfy(x => x.Should().Be(1));
+        }
+
+        [Fact]
+        public void ShouldPositionShipVertically()
+        {
+            var ship = new ShipBuilder()
+                .WithCoordinates(new Coordinates(1, 1))
+                .WithLayout(ShipLayout.Vertical)
+                .WithLength(new Length(3))
+                .Build();
+
+            ship.Compartments.Select(x => x.Coordinates.Y).Should().BeEquivalentTo(new[] { 1, 2, 3 });
+            ship.Compartments.Select(x => x.Coordinates.X).Should().AllSatisfy(x => x.Should().Be(1));
+        }
+
         [Theory]
         [MemberData(nameof(CollisionData))]
         public void ShouldHandleColisions(Ship ship1, Ship ship2, bool expectedResult)
@@ -44,12 +71,12 @@ namespace Bc.Battleships.UnitTests.Domain.Games.Ships
                 new object[] {
                     new ShipBuilder()
                         .WithLayout(ShipLayout.Horizontal)
-                        .WithCoordinates(new Coordinates(2,1))
+                        .WithCoordinates(new Coordinates(1,2))
                         .WithLength(new Length(3))
                         .Build(),
                     new ShipBuilder()
                         .WithLayout(ShipLayout.Vertical)
-                        .WithCoordinates(new Coordinates(1,2))
+                        .WithCoordinates(new Coordinates(2,1))
                         .WithLength(new Length(3))
                         .Build(),
                     true

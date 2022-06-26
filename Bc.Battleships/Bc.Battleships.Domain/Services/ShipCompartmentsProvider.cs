@@ -8,8 +8,8 @@ namespace Bc.Battleships.Domain.Services
     {
         public static IEnumerable<ShipCompartment> GetCompartments(Ship ship)
         {
-            var constantDimensionValue = ship.Layout == ShipLayout.Horizontal ? ship.Coordinates.X : ship.Coordinates.Y;
-            var varyingDimensionValue = ship.Layout == ShipLayout.Horizontal ? ship.Coordinates.Y : ship.Coordinates.X;
+            var constantDimensionValue = ship.Layout == ShipLayout.Horizontal ? ship.Coordinates.Y : ship.Coordinates.X;
+            var varyingDimensionValue = ship.Layout == ShipLayout.Horizontal ? ship.Coordinates.X : ship.Coordinates.Y;
 
             var varyingDimensionValues = Enumerable.Range(varyingDimensionValue, ship.Length.Value);
 

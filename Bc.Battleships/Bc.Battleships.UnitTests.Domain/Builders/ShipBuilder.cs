@@ -1,6 +1,7 @@
 ﻿using Bc.Battleships.Domain.AggregateRoots.Games.Ships;
 using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Domain.ValueObjects.Enums;
+using System;
 
 namespace Bc.Battleships.UnitTests.Domain.Builders
 {
@@ -32,6 +33,11 @@ namespace Bc.Battleships.UnitTests.Domain.Builders
         public Ship Build()
         {
             return new Ship(_coordinates, _layout, _length);
+        }
+
+        internal object WithLength()
+        {
+            throw new NotImplementedException();
         }
     }
 }

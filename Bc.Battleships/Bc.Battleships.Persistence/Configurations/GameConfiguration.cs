@@ -16,6 +16,7 @@ namespace Bc.Battleships.Persistence.Configurations
             builder.OwnsOne(x => x.ComputerPlayer)
                 .Property(x => x.Id)
                     .HasConversion<PlayerIdConverter>();
+            builder.Ignore(x => x.GameContext);
 
             builder.HasIndex(x => x.GameState);
         }

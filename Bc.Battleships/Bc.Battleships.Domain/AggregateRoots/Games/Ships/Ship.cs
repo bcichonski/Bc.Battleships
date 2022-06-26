@@ -1,6 +1,7 @@
 ﻿using Bc.Battleships.Domain.Services;
 using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Domain.ValueObjects.Enums;
+using System.Linq;
 
 namespace Bc.Battleships.Domain.AggregateRoots.Games.Ships
 {
@@ -20,5 +21,12 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Ships
 
             Compartments = ShipCompartmentsProvider.GetCompartments(this).ToList();
         }
+
+        public bool CollidesWith(Ship ship)
+            => Compartments
+            .Select(x => x.Coordinates)
+            .Concat(ship.Compartments.Select(x => x.Coordinates))
+            .Distinct()
+            .Count() < Length.Value + ship.Length.Value;
     }
 }

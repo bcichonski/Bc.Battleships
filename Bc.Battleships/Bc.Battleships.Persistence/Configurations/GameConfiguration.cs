@@ -28,11 +28,20 @@ namespace Bc.Battleships.Persistence.Configurations
             ownedShips.HasKey(x => x.Id);
             ownedShips
                 .Ignore(x => x.CurrentHitPoints);
+            ownedShips.Property(x => x.Coordinates)
+                .HasConversion<CoordinatesConverter>();
+            ownedShips.Property(x => x.Layout);
+            ownedShips.Property(x => x.Length)
+                .HasConversion<LengthConverter>();
+            ownedShips.Ignore(x => x.CurrentHitPoints);
             
             var ownedShipsCompartments = ownedShips.OwnsMany(x => x.Compartments);
             ownedShipsCompartments.Property(x => x.Id)
                 .HasConversion<ShipCompartmentIdConverter>();
             ownedShipsCompartments.HasKey(x => x.Id);
+            ownedShipsCompartments.Property(x => x.Coordinates)
+                .HasConversion<CoordinatesConverter>(); ;
+            ownedShipsCompartments.Property(x => x.State);
         }
     }
 }

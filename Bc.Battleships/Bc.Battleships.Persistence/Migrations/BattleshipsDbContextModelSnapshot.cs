@@ -57,6 +57,16 @@ namespace Bc.Battleships.Persistence.Migrations
                                     b2.Property<Guid>("ComputerPlayerGameId")
                                         .HasColumnType("TEXT");
 
+                                    b2.Property<string>("Coordinates")
+                                        .IsRequired()
+                                        .HasColumnType("TEXT");
+
+                                    b2.Property<int>("Layout")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("Length")
+                                        .HasColumnType("INTEGER");
+
                                     b2.HasKey("Id");
 
                                     b2.HasIndex("ComputerPlayerGameId");
@@ -71,8 +81,15 @@ namespace Bc.Battleships.Persistence.Migrations
                                             b3.Property<Guid>("Id")
                                                 .HasColumnType("TEXT");
 
+                                            b3.Property<string>("Coordinates")
+                                                .IsRequired()
+                                                .HasColumnType("TEXT");
+
                                             b3.Property<Guid>("ShipId")
                                                 .HasColumnType("TEXT");
+
+                                            b3.Property<int>("State")
+                                                .HasColumnType("INTEGER");
 
                                             b3.HasKey("Id");
 

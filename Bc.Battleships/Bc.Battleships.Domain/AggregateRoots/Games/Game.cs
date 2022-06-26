@@ -7,16 +7,17 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games
     public class Game
     {
         public GameId Id { get; }
-        public IList<Player> Players { get; }
+        public ComputerPlayer ComputerPlayer { get; }
+        public HumanPlayer HumanPlayer { get; }
 
         public GameState GameState { get; }
 
         public Game()
         {
             Id = new GameId();
-            Players = new List<Player>();
-            Players.Add(new HumanPlayer());
-            Players.Add(new ComputerPlayer());
+            
+            ComputerPlayer = new ComputerPlayer();
+            HumanPlayer = new HumanPlayer();
 
             GameState = GameState.Active;
         }

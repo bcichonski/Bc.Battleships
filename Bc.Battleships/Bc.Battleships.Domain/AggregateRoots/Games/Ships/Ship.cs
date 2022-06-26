@@ -8,10 +8,5 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Ships
         public ShipLayout Layout { get; }
         public Coordinates Coordinates { get; }
         public Length Length { get; }
-
-        public Ship()
-        {
-
-        }
     }
 }

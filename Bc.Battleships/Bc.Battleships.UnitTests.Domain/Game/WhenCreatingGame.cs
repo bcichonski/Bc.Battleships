@@ -1,7 +1,5 @@
 using FluentAssertions;
 using Bc.Battleships.Domain.AggregateRoots.Games;
-using Bc.Battleships.Domain.AggregateRoots.Games.Players;
-using System.Linq;
 using Xunit;
 
 namespace Bc.Battleships.UnitTests.Domain
@@ -17,19 +15,11 @@ namespace Bc.Battleships.UnitTests.Domain
         }
 
         [Fact]
-        public void GameShouldHaveTwoPlayers()
-        {
-            var game = new Game();
-
-            game.Players.Should().HaveCount(2);
-        }
-
-        [Fact]
         public void GameShouldHaveComputerPlayer()
         {
             var game = new Game();
 
-            game.Players.FirstOrDefault(x => x is ComputerPlayer).Should().NotBeNull();
+            game.ComputerPlayer.Should().NotBeNull();
         }
 
         [Fact]
@@ -37,7 +27,7 @@ namespace Bc.Battleships.UnitTests.Domain
         {
             var game = new Game();
 
-            game.Players.FirstOrDefault(x => x is HumanPlayer).Should().NotBeNull();
+            game.HumanPlayer.Should().NotBeNull();
         }
     }
 }

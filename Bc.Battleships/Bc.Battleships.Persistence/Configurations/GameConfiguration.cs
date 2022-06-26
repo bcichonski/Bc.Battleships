@@ -12,7 +12,8 @@ namespace Bc.Battleships.Persistence.Configurations
             builder.Property(x => x.Id)
                 .HasConversion<GameIdConverter>();
             builder.HasKey(x => x.Id);
-            builder.OwnsMany(x => x.Players)
+            builder.Ignore(x => x.HumanPlayer);
+            builder.OwnsOne(x => x.ComputerPlayer)
                 .Property(x => x.Id)
                     .HasConversion<PlayerIdConverter>();
 

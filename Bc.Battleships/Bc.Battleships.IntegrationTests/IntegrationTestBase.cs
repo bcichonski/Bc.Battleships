@@ -4,7 +4,6 @@ using Bc.Battleships.Persistence.Providers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Bc.Battleships.IntegrationTests
@@ -34,19 +33,17 @@ namespace Bc.Battleships.IntegrationTests
         public virtual void ConfigureServices(ServiceCollection serviceCollection)
         {
             serviceCollection.AddSingleton<IPersistenceConfigurationProvider, TestConfigurationProvider>();
-
-            Services.Configure(serviceCollection);
+            
+            Services.ConfigureServices(serviceCollection);
         }
 
         public async Task InScope(Func<BattleshipsDbContext, Task> action)
         {
             using (ServiceProvider.CreateAsyncScope())
             {
-                var dbContextFactory = ServiceProvider.GetService<IDbContextFactory<BattleshipsDbContext>>();
-                using(var dbContext = dbContextFactory!.CreateDbContext())
-                {
-                    await action(dbContext);
-                }
+                var dbContext = ServiceProvider.GetService<BattleshipsDbContext>();
+                
+                await action(dbContext!);
             }
         } 
 

@@ -8,10 +8,9 @@ namespace Bc.Battleships.EFMigrationsHelper
     {
         public BattleshipsDbContext CreateDbContext(string[] args)
         {
-            //var optionsBuilder = new DbContextOptionsBuilder<BattleshipsDbContext>();
-            //optionsBuilder.UseSqlite("Data Source=blog.db");
-
-            return new BattleshipsDbContext(new DesignTimePersistenceConfigurationProvider());
+            return new BattleshipsDbContext(new DbContextOptionsBuilder()
+                .UseSqlite(new DesignTimePersistenceConfigurationProvider().ConnectionString)
+                    .Options);
         }
     }
 }

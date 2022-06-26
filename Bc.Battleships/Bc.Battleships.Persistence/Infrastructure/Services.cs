@@ -1,14 +1,23 @@
 ﻿using Bc.Battleships.Domain.Repositories;
+using Bc.Battleships.Persistence.Providers;
 using Bc.Battleships.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Bc.Battleships.Persistence.Infrastructure
 {
     public static class Services
     {
-        public static void Configure(ServiceCollection serviceCollection)
+        public static void ConfigureServices(ServiceCollection serviceCollection)
         {
-            serviceCollection.AddDbContextFactory<BattleshipsDbContext>(lifetime: ServiceLifetime.Scoped);
+            serviceCollection.AddDbContext<BattleshipsDbContext, BattleshipsDbContext>(
+                (serviceProvider, dbContextOptionsBuilder) => dbContextOptionsBuilder
+                    .UseSqlite(serviceProvider!
+                        .GetService<IPersistenceConfigurationProvider>()!
+                        .ConnectionString),
+                ServiceLifetime.Scoped,
+                optionsLifetime: ServiceLifetime.Singleton);
+
             serviceCollection.AddScoped<IGamesRepository, GamesRepository>();
         }
     }

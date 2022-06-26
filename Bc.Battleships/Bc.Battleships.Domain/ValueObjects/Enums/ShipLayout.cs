@@ -1,4 +1,4 @@
-﻿namespace Bc.Battleships.Domain.Enums
+﻿namespace Bc.Battleships.Domain.ValueObjects.Enums
 {
     public enum ShipLayout
     {

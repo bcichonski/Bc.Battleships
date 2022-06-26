@@ -1,5 +1,6 @@
-﻿using Bc.Battleships.Domain.Enums;
+﻿using Bc.Battleships.Domain.Services;
 using Bc.Battleships.Domain.ValueObjects;
+using Bc.Battleships.Domain.ValueObjects.Enums;
 
 namespace Bc.Battleships.Domain.AggregateRoots.Games.Ships
 {
@@ -8,5 +9,16 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Ships
         public ShipLayout Layout { get; }
         public Coordinates Coordinates { get; }
         public Length Length { get; }
+        public IList<ShipCompartment> Compartments { get; }
+        public HitPoints CurrentHitPoints => new HitPoints(Compartments.Where(x => x.State == ShipCompartmentState.Dry).Count());
+
+        public Ship(Coordinates coordinates, ShipLayout layout, Length length)
+        {
+            Layout = layout;
+            Coordinates = coordinates;
+            Length = length;
+
+            Compartments = ShipCompartmentsProvider.GetCompartments(this).ToList();
+        }
     }
 }

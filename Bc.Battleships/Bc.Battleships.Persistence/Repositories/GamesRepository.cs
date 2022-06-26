@@ -1,6 +1,6 @@
 ﻿using Bc.Battleships.Domain.AggregateRoots.Games;
-using Bc.Battleships.Domain.Enums;
 using Bc.Battleships.Domain.Repositories;
+using Bc.Battleships.Domain.ValueObjects.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bc.Battleships.Persistence.Repositories

@@ -2,7 +2,7 @@ using FluentAssertions;
 using Bc.Battleships.Domain.AggregateRoots.Games;
 using Xunit;
 
-namespace Bc.Battleships.UnitTests.Domain
+namespace Bc.Battleships.UnitTests.Domain.Games
 {
     public class WhenCreatingGame
     {

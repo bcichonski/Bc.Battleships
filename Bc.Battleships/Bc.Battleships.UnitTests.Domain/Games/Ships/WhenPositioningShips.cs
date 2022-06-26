@@ -1,8 +1,7 @@
 ﻿using FluentAssertions;
 using Bc.Battleships.Domain.AggregateRoots.Games.Ships;
-using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Domain.ValueObjects.Enums;
-using Bc.Battleships.UnitTests.Domain.Builders;
+using Bc.Battleships.Tests.Common.Builders;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;

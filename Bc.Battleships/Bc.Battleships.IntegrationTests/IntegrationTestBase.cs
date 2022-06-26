@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Bc.Battleships.IntegrationTests
 {
-    public class IntegrationTestBase : IAsyncDisposable
+    public class IntegrationTestBase : IDisposable
     {
         protected ServiceProvider ServiceProvider { get; }
 
@@ -34,7 +34,7 @@ namespace Bc.Battleships.IntegrationTests
         {
             serviceCollection.AddSingleton<IPersistenceConfigurationProvider, TestConfigurationProvider>();
             
-            Services.ConfigureServices(serviceCollection);
+            Services.Configure(serviceCollection);
         }
 
         public async Task InScope(Func<BattleshipsDbContext, Task> action)
@@ -45,9 +45,19 @@ namespace Bc.Battleships.IntegrationTests
                 
                 await action(dbContext!);
             }
-        } 
+        }
 
-        public async ValueTask DisposeAsync()
-            => await InScope(dbc => dbc.Database.EnsureDeletedAsync());
+        public void InScope(Action<BattleshipsDbContext> action)
+        {
+            using (ServiceProvider.CreateScope())
+            {
+                var dbContext = ServiceProvider.GetService<BattleshipsDbContext>();
+
+                action(dbContext!);
+            }
+        }
+
+        public void Dispose()
+            => InScope(dbc => dbc.Database.EnsureDeleted());
     }
 }

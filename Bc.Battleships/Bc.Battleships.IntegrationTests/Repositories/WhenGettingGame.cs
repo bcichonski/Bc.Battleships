@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Bc.Battleships.Domain.AggregateRoots.Games;
 using Bc.Battleships.Domain.Repositories;
+using Bc.Battleships.Tests.Common.Builders;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 using Xunit;
@@ -38,6 +39,29 @@ namespace Bc.Battleships.IntegrationTests.Repositories
                 game!.HumanPlayer.Should().NotBeNull();
             });
         }
+
+        [Fact]
+        public async Task ShouldPreserveFleetState()
+        {
+            await AssumeGameInProgressInDb();
+
+            await InScope(async (_) =>
+            {
+                var gameRepository = ServiceProvider.GetService<IGamesRepository>();
+                var game = await gameRepository!.Get();
+
+                game!.ComputerPlayer.CurrentHitPoints.Value.Should().BeGreaterThan(0);
+            });
+        }
+
+        private Task AssumeGameInProgressInDb()
+             => InScope(async dbContext =>
+                 {
+                     var game = new GameBuilder().Build();
+
+                     await dbContext!.AddAsync(game);
+                     await dbContext.SaveChangesAsync();
+                 });
 
         private Task AssumeGameInDb()
             => InScope(async dbContext =>

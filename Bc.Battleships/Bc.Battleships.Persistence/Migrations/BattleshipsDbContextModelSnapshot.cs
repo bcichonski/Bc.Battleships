@@ -34,7 +34,7 @@ namespace Bc.Battleships.Persistence.Migrations
 
             modelBuilder.Entity("Bc.Battleships.Domain.AggregateRoots.Games.Game", b =>
                 {
-                    b.OwnsMany("Bc.Battleships.Domain.AggregateRoots.Games.Players.Player", "Players", b1 =>
+                    b.OwnsOne("Bc.Battleships.Domain.AggregateRoots.Games.Players.ComputerPlayer", "ComputerPlayer", b1 =>
                         {
                             b1.Property<Guid>("GameId")
                                 .HasColumnType("TEXT");
@@ -42,15 +42,56 @@ namespace Bc.Battleships.Persistence.Migrations
                             b1.Property<Guid>("Id")
                                 .HasColumnType("TEXT");
 
-                            b1.HasKey("GameId", "Id");
+                            b1.HasKey("GameId");
 
-                            b1.ToTable("Player");
+                            b1.ToTable("Game");
 
                             b1.WithOwner()
                                 .HasForeignKey("GameId");
+
+                            b1.OwnsMany("Bc.Battleships.Domain.AggregateRoots.Games.Ships.Ship", "Ships", b2 =>
+                                {
+                                    b2.Property<Guid>("Id")
+                                        .HasColumnType("TEXT");
+
+                                    b2.Property<Guid>("ComputerPlayerGameId")
+                                        .HasColumnType("TEXT");
+
+                                    b2.HasKey("Id");
+
+                                    b2.HasIndex("ComputerPlayerGameId");
+
+                                    b2.ToTable("Ship");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ComputerPlayerGameId");
+
+                                    b2.OwnsMany("Bc.Battleships.Domain.AggregateRoots.Games.Ships.ShipCompartment", "Compartments", b3 =>
+                                        {
+                                            b3.Property<Guid>("Id")
+                                                .HasColumnType("TEXT");
+
+                                            b3.Property<Guid>("ShipId")
+                                                .HasColumnType("TEXT");
+
+                                            b3.HasKey("Id");
+
+                                            b3.HasIndex("ShipId");
+
+                                            b3.ToTable("ShipCompartment");
+
+                                            b3.WithOwner()
+                                                .HasForeignKey("ShipId");
+                                        });
+
+                                    b2.Navigation("Compartments");
+                                });
+
+                            b1.Navigation("Ships");
                         });
 
-                    b.Navigation("Players");
+                    b.Navigation("ComputerPlayer")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

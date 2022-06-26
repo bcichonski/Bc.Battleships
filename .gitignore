@@ -9,3 +9,5 @@ Bc.Battleships/Bc.Battleships.IntegrationTests/obj
 Bc.Battleships/Bc.Battleships.Persistence/obj
 Bc.Battleships/Bc.Battleships.UnitTests.Domain/obj
 Bc.Battleships/Bc.Battleships.EFMigrationsHelper/obj
+Bc.Battleships/Bc.Battleships.Tests.Common/obj
+Bc.Battleships/Bc.Battleships.Tests.Common/bin

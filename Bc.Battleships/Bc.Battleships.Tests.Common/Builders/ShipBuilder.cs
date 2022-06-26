@@ -1,11 +1,10 @@
 ﻿using Bc.Battleships.Domain.AggregateRoots.Games.Ships;
 using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Domain.ValueObjects.Enums;
-using System;
 
-namespace Bc.Battleships.UnitTests.Domain.Builders
+namespace Bc.Battleships.Tests.Common.Builders
 {
-    internal class ShipBuilder
+    public class ShipBuilder
     {
         private Coordinates _coordinates = new Coordinates(1, 1);
         private ShipLayout _layout = ShipLayout.Horizontal;

@@ -15,11 +15,15 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games
 
         public GameState GameState { get; }
 
-        public Game()
+        public Game() : this(new ComputerPlayer())
+        {
+        }
+
+        internal Game(ComputerPlayer computerPlayer)
         {
             Id = new GameId();
-            
-            ComputerPlayer = new ComputerPlayer();
+
+            ComputerPlayer = computerPlayer;
 
             GameState = GameState.Active;
         }

@@ -1,15 +1,35 @@
-﻿using Bc.Battleships.Domain.AggregateRoots.Games.Ships;
+﻿using EnsureThat;
+using Bc.Battleships.Domain.AggregateRoots.Games.Ships;
 using Bc.Battleships.Domain.Services.FleetFactory;
+using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Domain.ValueObjects.GameContext;
 
 namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
 {
     public class ComputerPlayer : Player
     {
-        protected IList<Ship>? Ships { get; private set; }
+        public HitPoints CurrentHitPoints =>
+            Ships switch
+            {
+                not null => new HitPoints(Ships.Sum(x => x.CurrentHitPoints.Value)),
+                _ => throw new NullReferenceException()
+            };
+
+        public IList<Ship>? Ships { get; private set; } = null;
+
+        public ComputerPlayer() : base()
+        {
+        }
+
+        internal ComputerPlayer(IList<Ship> ships)
+        {
+            Ships = ships;
+        }
 
         public void PositionShips(GameContext gameContext)
         {
+            Ensure.That(Ships is null).IsTrue();
+
             var fleetFactory = new FleetFactory(gameContext);
 
             Ships = fleetFactory.BuildAndPositionShips().ToList();

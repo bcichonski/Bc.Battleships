@@ -13,12 +13,26 @@ namespace Bc.Battleships.Persistence.Configurations
                 .HasConversion<GameIdConverter>();
             builder.HasKey(x => x.Id);
             builder.Ignore(x => x.HumanPlayer);
-            builder.OwnsOne(x => x.ComputerPlayer)
-                .Property(x => x.Id)
-                    .HasConversion<PlayerIdConverter>();
-            builder.Ignore(x => x.GameContext);
 
+            var ownedComputerPlayer = builder.OwnsOne(x => x.ComputerPlayer);
+            builder.Ignore(x => x.GameContext);
             builder.HasIndex(x => x.GameState);
+
+            ownedComputerPlayer.Ignore(x => x.CurrentHitPoints);
+            ownedComputerPlayer.Property(x => x.Id)
+                .HasConversion<PlayerIdConverter>();
+
+            var ownedShips = ownedComputerPlayer.OwnsMany(x => x.Ships);
+            ownedShips.Property(x => x.Id)
+                .HasConversion<ShipIdConverter>();
+            ownedShips.HasKey(x => x.Id);
+            ownedShips
+                .Ignore(x => x.CurrentHitPoints);
+            
+            var ownedShipsCompartments = ownedShips.OwnsMany(x => x.Compartments);
+            ownedShipsCompartments.Property(x => x.Id)
+                .HasConversion<ShipCompartmentIdConverter>();
+            ownedShipsCompartments.HasKey(x => x.Id);
         }
     }
 }

@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bc.Battleships.Persistence\Bc.Battleships.Persistence.csproj" />
+    <ProjectReference Include="..\Bc.Battleships.Tests.Common\Bc.Battleships.Tests.Common.csproj" />
   </ItemGroup>
 
 </Project>

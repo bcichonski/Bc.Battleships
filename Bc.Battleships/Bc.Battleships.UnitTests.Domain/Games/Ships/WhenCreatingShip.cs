@@ -1,6 +1,6 @@
 using FluentAssertions;
 using Bc.Battleships.Domain.ValueObjects.Enums;
-using Bc.Battleships.UnitTests.Domain.Builders;
+using Bc.Battleships.Tests.Common.Builders;
 using Xunit;
 
 namespace Bc.Battleships.UnitTests.Domain.Games.Ships

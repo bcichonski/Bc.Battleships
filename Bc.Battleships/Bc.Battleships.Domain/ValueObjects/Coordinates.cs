@@ -2,11 +2,11 @@
 
 namespace Bc.Battleships.Domain.ValueObjects
 {
-    public record Coordinates(int X, int Y)
+    public record Coordinates(int Column, int Row)
     {
         public override string ToString()
         {
-            return $"{NumberToLettersConverter.Convert(X)}{Y}";
+            return $"{NumberToLettersConverter.Convert(Column)}{Row}";
         }
 
         public static Coordinates Parse(string value)

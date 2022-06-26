@@ -19,8 +19,8 @@ namespace Bc.Battleships.UnitTests.Domain.Games.Ships
                 .WithLength(3)
                 .Build();
 
-            ship.Compartments.Select(x => x.Coordinates.X).Should().BeEquivalentTo(new[] { 1, 2, 3 });
-            ship.Compartments.Select(x => x.Coordinates.Y).Should().AllSatisfy(x => x.Should().Be(1));
+            ship.Compartments.Select(x => x.Coordinates.Column).Should().BeEquivalentTo(new[] { 1, 2, 3 });
+            ship.Compartments.Select(x => x.Coordinates.Row).Should().AllSatisfy(x => x.Should().Be(1));
         }
 
         [Fact]
@@ -32,8 +32,8 @@ namespace Bc.Battleships.UnitTests.Domain.Games.Ships
                 .WithLength(3)
                 .Build();
 
-            ship.Compartments.Select(x => x.Coordinates.Y).Should().BeEquivalentTo(new[] { 1, 2, 3 });
-            ship.Compartments.Select(x => x.Coordinates.X).Should().AllSatisfy(x => x.Should().Be(1));
+            ship.Compartments.Select(x => x.Coordinates.Row).Should().BeEquivalentTo(new[] { 1, 2, 3 });
+            ship.Compartments.Select(x => x.Coordinates.Column).Should().AllSatisfy(x => x.Should().Be(1));
         }
 
         [Theory]

@@ -23,8 +23,8 @@ namespace Bc.Battleships.UnitTests.Domain.Services
         {
             var coordinates = Coordinates.Parse(@string);
 
-            coordinates.X.Should().Be(expectedColumn);
-            coordinates.Y.Should().Be(expectedRow);
+            coordinates.Column.Should().Be(expectedColumn);
+            coordinates.Row.Should().Be(expectedRow);
         }
     }
 }

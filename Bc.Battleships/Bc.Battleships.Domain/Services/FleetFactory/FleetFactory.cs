@@ -22,7 +22,7 @@ namespace Bc.Battleships.Domain.Services.FleetFactory
 
             foreach (var shipBlueprint in _gameContext.ShipBlueprints)
             {
-                BuildAndPositionShip(shipBlueprint, createdShips);
+                createdShips.Add(BuildAndPositionShip(shipBlueprint, createdShips));
             }
 
             return createdShips;
@@ -33,7 +33,7 @@ namespace Bc.Battleships.Domain.Services.FleetFactory
             const int maxRandomAttempts = 10;
             int currentAttempt = 1;
 
-            while(currentAttempt < maxRandomAttempts)
+            while (currentAttempt < maxRandomAttempts)
             {
 
                 var ship = BuildAndPositionShipRandomly(shipBlueprint);
@@ -50,7 +50,7 @@ namespace Bc.Battleships.Domain.Services.FleetFactory
         }
 
         private bool IsNotCollidingWith(Ship ship, List<Ship> createdShips)
-            => createdShips.All(x => !x.CollidesWith(ship));
+            => createdShips.All(x => !x.IntersectsWith(ship));
 
         private Ship BuildAndPositionShipRandomly(ShipBlueprint shipBlueprint)
         {

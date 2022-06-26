@@ -2,6 +2,7 @@
 using Bc.Battleships.Domain.AggregateRoots.Games.Ships;
 using Bc.Battleships.Domain.Services.FleetFactory;
 using Bc.Battleships.Domain.ValueObjects;
+using Bc.Battleships.Domain.ValueObjects.Enums;
 using Bc.Battleships.Domain.ValueObjects.GameContext;
 
 namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
@@ -21,7 +22,7 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
         {
         }
 
-        internal ComputerPlayer(IList<Ship> ships)
+        internal ComputerPlayer(IList<Ship>? ships)
         {
             Ships = ships;
         }
@@ -33,6 +34,19 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
             var fleetFactory = new FleetFactory(gameContext);
 
             Ships = fleetFactory.BuildAndPositionShips().ToList();
+        }
+
+        public ShootResult BraceForImpact(Coordinates coordinates)
+        {
+            foreach(var ship in Ships!)
+            {
+                if(ship.Hit(coordinates) == ShootResult.Hit)
+                {
+                    return ShootResult.Hit;
+                }
+            }
+
+            return ShootResult.Miss;
         }
     }
 }

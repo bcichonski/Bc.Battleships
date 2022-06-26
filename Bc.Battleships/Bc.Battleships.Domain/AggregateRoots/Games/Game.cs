@@ -32,5 +32,8 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games
         {
             ComputerPlayer.PositionShips(GameContext);
         }
+
+        public ShootResult Shoot(Coordinates coordinates)
+            => ComputerPlayer.BraceForImpact(coordinates);
     }
 }

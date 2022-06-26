@@ -7,7 +7,7 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Ships
     {
         public ShipCompartmentId Id { get; }
         public Coordinates Coordinates { get; }
-        public ShipCompartmentState State { get; }
+        public ShipCompartmentState State { get; private set; }
 
         public ShipCompartment(Coordinates coordinates)
         {
@@ -18,5 +18,13 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Ships
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         private ShipCompartment() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
+        public bool Hit()
+        {
+            var oldState = State;
+            State = ShipCompartmentState.Flooded;
+
+            return oldState == ShipCompartmentState.Dry;
+        }
     }
 }

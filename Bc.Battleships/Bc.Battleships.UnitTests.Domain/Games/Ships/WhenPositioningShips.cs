@@ -40,8 +40,8 @@ namespace Bc.Battleships.UnitTests.Domain.Games.Ships
         [MemberData(nameof(CollisionData))]
         public void ShouldHandleColisions(Ship ship1, Ship ship2, bool expectedResult)
         {
-            ship1.CollidesWith(ship2).Should().Be(expectedResult);
-            ship2.CollidesWith(ship1).Should().Be(expectedResult);
+            ship1.IntersectsWith(ship2).Should().Be(expectedResult);
+            ship2.IntersectsWith(ship1).Should().Be(expectedResult);
         }
 
         public static IEnumerable<object[]> CollisionData =>

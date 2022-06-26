@@ -1,9 +1,11 @@
+using Bc.Battleships.Domain.Events;
 using Bc.Battleships.Persistence;
 using Bc.Battleships.Persistence.Infrastructure;
 using Bc.Battleships.Persistence.Providers;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using System;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Bc.Battleships.IntegrationTests
@@ -11,6 +13,7 @@ namespace Bc.Battleships.IntegrationTests
     public class IntegrationTestBase : IDisposable
     {
         protected ServiceProvider ServiceProvider { get; }
+        private IBus _busSubstitute { get; }
 
         public IntegrationTestBase()
         {
@@ -19,6 +22,9 @@ namespace Bc.Battleships.IntegrationTests
             ConfigureServices(services);
 
             ServiceProvider = services.BuildServiceProvider();
+            _busSubstitute = Substitute.For<IBus>();
+
+            DomainEventBus.Use(_busSubstitute);
 
             InitializeDatabase().Wait();
         }
@@ -55,6 +61,16 @@ namespace Bc.Battleships.IntegrationTests
 
                 action(dbContext!);
             }
+        }
+
+        public void AssertDomainEventWasPublished<T>(Expression<Predicate<T>> assertExpression) where T:IDomainEvent
+        {
+            _busSubstitute.Received().Publish(Arg.Is<T>(assertExpression));
+        }
+
+        public void AssertDomainEventWasNotPublished<T>() where T : IDomainEvent
+        {
+            _busSubstitute.Received().Publish(Arg.Any<T>());
         }
 
         public void Dispose()

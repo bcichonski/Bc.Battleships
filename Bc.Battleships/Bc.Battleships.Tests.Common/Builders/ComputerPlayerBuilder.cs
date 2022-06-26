@@ -5,7 +5,7 @@ namespace Bc.Battleships.Tests.Common.Builders
 {
     public class ComputerPlayerBuilder
     {
-        private IList<Ship>? _ships = null;
+        private IList<Ship>? _ships = CreateDefaultFleet();
 
         public ComputerPlayerBuilder WithFleet(IList<Ship> ships)
         {
@@ -13,16 +13,20 @@ namespace Bc.Battleships.Tests.Common.Builders
             return this;
         }
 
+        public ComputerPlayerBuilder WithNoFleet()
+        {
+            _ships = null;
+            return this;
+        }
+
         public ComputerPlayer Build()
         {
-            _ships ??= CreateDefaultFleet();
-
-            var computerPlayer = new ComputerPlayer(_ships!);
+            var computerPlayer = new ComputerPlayer(_ships);
 
             return computerPlayer;
         }
 
-        private IList<Ship>? CreateDefaultFleet()
+        private static IList<Ship>? CreateDefaultFleet()
             => new List<Ship>()
             {
                 new ShipBuilder()

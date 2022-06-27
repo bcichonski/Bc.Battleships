@@ -44,14 +44,6 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Ships
             return ShootResult.Miss;
         }
 
-        private void EmitEventOnSinking()
-        {
-            if (CurrentHitPoints.Value <= 0)
-            {
-                DomainEventBus.Instance.Publish(new AbandonTheShipDomainEvent(this));
-            }
-        }
-
         public bool IntersectsWith(Ship ship)
             => Compartments
             .Select(x => x.Coordinates)
@@ -59,10 +51,14 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Ships
             .Distinct()
             .Count() < Length.Value + ship.Length.Value;
 
-        public bool IntersectsWith(Coordinates coordinates)
-            => GetCompartmentAt(coordinates) != null;
-
         private ShipCompartment? GetCompartmentAt(Coordinates coordinates)
             => Compartments.FirstOrDefault(x => x.Coordinates == coordinates);
+        private void EmitEventOnSinking()
+        {
+            if (CurrentHitPoints.Value <= 0)
+            {
+                DomainEventBus.Instance.Publish(new AbandonTheShipDomainEvent(this));
+            }
+        }
     }
 }

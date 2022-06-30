@@ -17,21 +17,27 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
             };
 
         public IList<Ship>? Ships { get; private set; } = null;
+        public Game Game { get; }
 
-        public ComputerPlayer() : base()
+        public ComputerPlayer(Game game) : base()
         {
+            Game = game;
         }
 
-        internal ComputerPlayer(IList<Ship>? ships)
+        internal ComputerPlayer(Game game, IList<Ship>? ships) : this(game)
         {
             Ships = ships;
         }
 
-        public void PositionShips(GameContext gameContext)
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        private ComputerPlayer() { }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
+        public void PositionShips()
         {
             Ensure.That(Ships is null).IsTrue();
 
-            var fleetFactory = new FleetFactory(gameContext);
+            var fleetFactory = new FleetFactory(Game);
 
             Ships = fleetFactory.BuildAndPositionShips().ToList();
         }

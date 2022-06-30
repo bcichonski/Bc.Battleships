@@ -6,7 +6,7 @@ namespace Bc.Battleships.Infrastructure
     {
         public static void Configure(ServiceCollection serviceCollection)
         {
-            serviceCollection.AddDbContextFactory<BattleshipsDbContext>();
+            Services.Configure(serviceCollection);
         }
     }
 }

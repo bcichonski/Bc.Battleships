@@ -14,7 +14,7 @@ namespace Bc.Battleships.UnitTests.Domain.Games.Players
                 .WithNoFleet()
                 .Build();
 
-            player.PositionShips(GameContextProvider.GameContext);
+            player.PositionShips();
 
             player.Ships.Should().NotBeNull();
             player.Ships.Should().AllSatisfy(x => x.Compartments.Should().NotBeNull());

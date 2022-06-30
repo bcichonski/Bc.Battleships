@@ -15,22 +15,23 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games
 
         public GameState GameState { get; }
 
-        public Game() : this(new ComputerPlayer())
-        {
-        }
-
-        internal Game(ComputerPlayer computerPlayer)
+        public Game()
         {
             Id = new GameId();
 
-            ComputerPlayer = computerPlayer;
+            ComputerPlayer = new ComputerPlayer(this);
 
             GameState = GameState.Active;
         }
 
+        internal Game(ComputerPlayer computerPlayer) : this()
+        {
+            ComputerPlayer = computerPlayer;
+        }
+
         public void PositionFleets()
         {
-            ComputerPlayer.PositionShips(GameContext);
+            ComputerPlayer.PositionShips();
         }
 
         public ShootResult Shoot(Coordinates coordinates)

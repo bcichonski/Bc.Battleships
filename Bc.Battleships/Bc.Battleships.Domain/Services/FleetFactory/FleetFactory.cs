@@ -3,24 +3,25 @@ using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Domain.ValueObjects.Enums;
 using Bc.Battleships.Domain.ValueObjects.GameContext;
 using Bc.Battleships.Domain.Extensions;
+using Bc.Battleships.Domain.AggregateRoots.Games;
 
 namespace Bc.Battleships.Domain.Services.FleetFactory
 {
     internal class FleetFactory
     {
         private readonly Random _random = new Random();
-        private readonly GameContext _gameContext;
+        private readonly Game _game;
 
-        public FleetFactory(GameContext gameContext)
+        public FleetFactory(Game game)
         {
-            _gameContext = gameContext;
+            _game = game;
         }
 
         public IEnumerable<Ship> BuildAndPositionShips()
         {
             var createdShips = new List<Ship>();
 
-            foreach (var shipBlueprint in _gameContext.ShipBlueprints)
+            foreach (var shipBlueprint in _game.GameContext.ShipBlueprints)
             {
                 createdShips.Add(BuildAndPositionShip(shipBlueprint, createdShips));
             }
@@ -57,7 +58,7 @@ namespace Bc.Battleships.Domain.Services.FleetFactory
             var randomLayout = GetRandomLayout();
             var randomCoordinates = GetRandomCoordinates(randomLayout, shipBlueprint);
 
-            return new Ship(randomCoordinates, randomLayout, shipBlueprint.Length);
+            return new Ship(_game.ComputerPlayer, randomCoordinates, randomLayout, shipBlueprint.Length);
         }
 
         private ShipLayout GetRandomLayout()
@@ -66,8 +67,8 @@ namespace Bc.Battleships.Domain.Services.FleetFactory
         private Coordinates GetRandomCoordinates(ShipLayout shipLayout, ShipBlueprint shipBlueprint)
             => shipLayout switch
             {
-                ShipLayout.Horizontal => new Coordinates(_random.Next(1, _gameContext.BoardSize.Value - shipBlueprint.Length.Value), _random.Next(1, _gameContext.BoardSize.Value)),
-                ShipLayout.Vertical => new Coordinates(_random.Next(1, _gameContext.BoardSize.Value), _random.Next(1, _gameContext.BoardSize.Value - shipBlueprint.Length.Value)),
+                ShipLayout.Horizontal => new Coordinates(_random.Next(1, _game.GameContext.BoardSize.Value - shipBlueprint.Length.Value), _random.Next(1, _game.GameContext.BoardSize.Value)),
+                ShipLayout.Vertical => new Coordinates(_random.Next(1, _game.GameContext.BoardSize.Value), _random.Next(1, _game.GameContext.BoardSize.Value - shipBlueprint.Length.Value)),
                 _ => throw new FleetFactoryException()
             };
     }

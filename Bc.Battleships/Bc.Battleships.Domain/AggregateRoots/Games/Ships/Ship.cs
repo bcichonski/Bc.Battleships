@@ -11,15 +11,17 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Ships
     public class Ship
     {
         public ShipId Id { get; }
+        public ComputerPlayer Owner { get; }
         public ShipLayout Layout { get; }
         public Coordinates Coordinates { get; }
         public Length Length { get; }
         public IList<ShipCompartment> Compartments { get; }
         public HitPoints CurrentHitPoints => new HitPoints(Compartments.Where(x => x.State == ShipCompartmentState.Dry).Count());
 
-        public Ship(Coordinates coordinates, ShipLayout layout, Length length)
+        public Ship(ComputerPlayer owner, Coordinates coordinates, ShipLayout layout, Length length)
         {
             Id = new ShipId();
+            Owner = owner;
             Layout = layout;
             Coordinates = coordinates;
             Length = length;

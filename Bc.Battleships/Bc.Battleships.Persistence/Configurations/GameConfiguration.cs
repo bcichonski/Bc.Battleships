@@ -13,35 +13,41 @@ namespace Bc.Battleships.Persistence.Configurations
                 .HasConversion<GameIdConverter>();
             builder.HasKey(x => x.Id);
             builder.Ignore(x => x.HumanPlayer);
-
-            var ownedComputerPlayer = builder.OwnsOne(x => x.ComputerPlayer);
             builder.Ignore(x => x.GameContext);
             builder.HasIndex(x => x.GameState);
 
-            ownedComputerPlayer.Ignore(x => x.CurrentHitPoints);
-            ownedComputerPlayer.Property(x => x.Id)
-                .HasConversion<PlayerIdConverter>();
+            builder.OwnsOne(x => x.ComputerPlayer, x =>
+            {
+                x.Ignore(y => y.CurrentHitPoints);
+                x.Property(y => y.Id)
+                    .HasConversion<PlayerIdConverter>();
+                x.WithOwner(y => y.Game);
 
-            var ownedShips = ownedComputerPlayer.OwnsMany(x => x.Ships);
-            ownedShips.Property(x => x.Id)
-                .HasConversion<ShipIdConverter>();
-            ownedShips.HasKey(x => x.Id);
-            ownedShips
-                .Ignore(x => x.CurrentHitPoints);
-            ownedShips.Property(x => x.Coordinates)
-                .HasConversion<CoordinatesConverter>();
-            ownedShips.Property(x => x.Layout);
-            ownedShips.Property(x => x.Length)
-                .HasConversion<LengthConverter>();
-            ownedShips.Ignore(x => x.CurrentHitPoints);
-            
-            var ownedShipsCompartments = ownedShips.OwnsMany(x => x.Compartments);
-            ownedShipsCompartments.Property(x => x.Id)
-                .HasConversion<ShipCompartmentIdConverter>();
-            ownedShipsCompartments.HasKey(x => x.Id);
-            ownedShipsCompartments.Property(x => x.Coordinates)
-                .HasConversion<CoordinatesConverter>(); ;
-            ownedShipsCompartments.Property(x => x.State);
+                x.OwnsMany(y => y.Ships, y =>
+                {
+                     y.Property(z => z.Id)
+                        .HasConversion<ShipIdConverter>();
+                     y.HasKey(z => z.Id);
+                     y.Ignore(z => z.CurrentHitPoints);
+                     y.Property(z => z.Coordinates)
+                        .HasConversion<CoordinatesConverter>();
+                     y.Property(z => z.Layout);
+                     y.Property(z => z.Length)
+                        .HasConversion<LengthConverter>();
+                     y.Ignore(z => z.CurrentHitPoints);
+                     y.WithOwner(z => z.Owner);
+
+                     y.OwnsMany(z => z.Compartments, z =>
+                     {
+                         z.Property(q => q.Id)
+                            .HasConversion<ShipCompartmentIdConverter>();
+                         z.HasKey(q => q.Id);
+                         z.Property(q => q.Coordinates)
+                            .HasConversion<CoordinatesConverter>(); ;
+                         z.Property(q => q.State);
+                     });
+                });
+            });
         }
     }
 }

@@ -2,22 +2,21 @@
 
 namespace Bc.Battleships.Messages.DTOs
 {
+    [Serializable]
     public class BoardDto
     {
         public int BoardSize { get; }
-        public BoardFieldState[,] BoardFieldState { get; }
+        public BoardRowDto[] BoardRows { get; }
 
-        public BoardDto(int boardSize, BoardFieldState[,] boardFieldState)
+        public BoardDto(int boardSize, BoardRowDto[] boardRows)
         {
-            Ensure.That(boardFieldState.Rank).Is(2);
-            Ensure.That(boardFieldState.GetLength(0)).Equals(boardSize);
-            Ensure.That(boardFieldState.GetLength(1)).Equals(boardSize);
+            Ensure.That(boardRows.Length).Is(boardSize);
 
             BoardSize = boardSize;
-            BoardFieldState = boardFieldState;
+            BoardRows = boardRows;
         }
 
-        public BoardDto(BoardFieldState[,] boardFieldState) : this(boardFieldState.GetLength(0), boardFieldState)
+        public BoardDto(BoardRowDto[] boardRows) : this(boardRows.Length, boardRows)
         {
         }
     }

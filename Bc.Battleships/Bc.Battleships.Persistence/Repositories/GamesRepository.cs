@@ -26,6 +26,11 @@ namespace Bc.Battleships.Persistence.Repositories
                 .FirstOrDefaultAsync(x => x.Id == gameId, cancellationToken);
 
 
-        public void Add(Game game) => _battleshipsDbContext.Add(game);
+        public async Task Add(Game game) 
+        {
+            _battleshipsDbContext.Add(game);
+
+            await _battleshipsDbContext.SaveChangesAsync();
+        }
     }
 }

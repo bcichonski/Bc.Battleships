@@ -8,6 +8,6 @@ namespace Bc.Battleships.Domain.Repositories
         Task<Game?> Get(CancellationToken cancellationToken);
         Task<Game?> GetById(GameId gameId, CancellationToken cancellationToken);
 
-        void Add(Game game);
+        Task Add(Game game);
     }
 }

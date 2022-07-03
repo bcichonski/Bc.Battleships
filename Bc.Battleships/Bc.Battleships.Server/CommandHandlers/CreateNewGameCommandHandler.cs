@@ -17,10 +17,10 @@ namespace Bc.Battleships.Server.CommandHandlers
         protected override async Task Handle(CreateNewGameCommand request, CancellationToken cancellationToken)
         {
             var currentGame = await _gamesRepository.Get(cancellationToken);
-            currentGame!.Stop();
+            currentGame?.Stop();
 
             var newGame = Game.CreateNewGame();
-            _gamesRepository.Add(newGame);
+            await _gamesRepository.Add(newGame);
         }
     }
 }

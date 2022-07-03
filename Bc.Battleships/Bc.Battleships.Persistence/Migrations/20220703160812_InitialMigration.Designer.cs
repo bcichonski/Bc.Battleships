@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bc.Battleships.Persistence.Migrations
 {
     [DbContext(typeof(BattleshipsDbContext))]
-    [Migration("20220703094434_ChangeTypeForListOfFieldsThatHaveBeenShootAt")]
-    partial class ChangeTypeForListOfFieldsThatHaveBeenShootAt
+    [Migration("20220703160812_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -53,25 +53,25 @@ namespace Bc.Battleships.Persistence.Migrations
 
                             b1.OwnsMany("Bc.Battleships.Domain.AggregateRoots.Games.Players.ShotCoordinates", "CoordinatesShoot", b2 =>
                                 {
-                                    b2.Property<Guid>("OwnerGameId")
+                                    b2.Property<Guid>("Id")
+                                        .ValueGeneratedOnAdd()
                                         .HasColumnType("TEXT");
 
-                                    b2.Property<int>("Id")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("INTEGER");
+                                    b2.Property<Guid>("ComputerPlayerGameId")
+                                        .HasColumnType("TEXT");
 
                                     b2.Property<string>("Coordinates")
                                         .IsRequired()
                                         .HasColumnType("TEXT");
 
-                                    b2.HasKey("OwnerGameId", "Id");
+                                    b2.HasKey("Id");
+
+                                    b2.HasIndex("ComputerPlayerGameId");
 
                                     b2.ToTable("ShotCoordinates");
 
-                                    b2.WithOwner("Owner")
-                                        .HasForeignKey("OwnerGameId");
-
-                                    b2.Navigation("Owner");
+                                    b2.WithOwner()
+                                        .HasForeignKey("ComputerPlayerGameId");
                                 });
 
                             b1.OwnsMany("Bc.Battleships.Domain.AggregateRoots.Games.Ships.Ship", "Ships", b2 =>

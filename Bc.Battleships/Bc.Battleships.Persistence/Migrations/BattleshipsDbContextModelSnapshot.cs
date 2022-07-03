@@ -55,23 +55,21 @@ namespace Bc.Battleships.Persistence.Migrations
                                         .ValueGeneratedOnAdd()
                                         .HasColumnType("TEXT");
 
+                                    b2.Property<Guid>("ComputerPlayerGameId")
+                                        .HasColumnType("TEXT");
+
                                     b2.Property<string>("Coordinates")
                                         .IsRequired()
                                         .HasColumnType("TEXT");
 
-                                    b2.Property<Guid>("OwnerGameId")
-                                        .HasColumnType("TEXT");
-
                                     b2.HasKey("Id");
 
-                                    b2.HasIndex("OwnerGameId");
+                                    b2.HasIndex("ComputerPlayerGameId");
 
                                     b2.ToTable("ShotCoordinates");
 
-                                    b2.WithOwner("Owner")
-                                        .HasForeignKey("OwnerGameId");
-
-                                    b2.Navigation("Owner");
+                                    b2.WithOwner()
+                                        .HasForeignKey("ComputerPlayerGameId");
                                 });
 
                             b1.OwnsMany("Bc.Battleships.Domain.AggregateRoots.Games.Ships.Ship", "Ships", b2 =>

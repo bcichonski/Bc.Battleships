@@ -14,7 +14,7 @@ namespace Bc.Battleships.Persistence.Infrastructure
                 (serviceProvider, dbContextOptionsBuilder) => dbContextOptionsBuilder
                     /*.EnableSensitiveDataLogging()
                     .EnableDetailedErrors()
-                    .LogTo(Console.WriteLine)*/
+                    .LogTo(Console.WriteLine)*/                    
                     .UseSqlite(serviceProvider!
                         .GetService<IPersistenceConfigurationProvider>()!
                         .ConnectionString),
@@ -22,6 +22,7 @@ namespace Bc.Battleships.Persistence.Infrastructure
                 optionsLifetime: ServiceLifetime.Singleton);
 
             serviceCollection.AddScoped<IGamesRepository, GamesRepository>();
+            serviceCollection.AddScoped<DatabaseMigrator>();
         }
     }
 }

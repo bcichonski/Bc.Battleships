@@ -12,6 +12,12 @@ namespace Bc.Battleships.Tests.Common.Builders
         private Length _length = new Length(3);
         private ComputerPlayer? _computerPlayer = null;
 
+        public ShipBuilder WithComputerPlayer(ComputerPlayer computerPlayer)
+        {
+            _computerPlayer = computerPlayer;
+            return this;
+        }
+
         public ShipBuilder WithCoordinates(Coordinates coordinates)
         {
             _coordinates = coordinates;
@@ -45,14 +51,14 @@ namespace Bc.Battleships.Tests.Common.Builders
 
         public Ship Build()
         {
-            _computerPlayer ??= new ComputerPlayerBuilder().Build();
+            var ship = new Ship(_coordinates, _layout, _length);
 
-            return new Ship(_computerPlayer, _coordinates, _layout, _length);
-        }
+            if(_computerPlayer != null)
+            {
+                ship.SetOwner(_computerPlayer);
+            }
 
-        internal object WithLength()
-        {
-            throw new NotImplementedException();
+            return ship;
         }
     }
 }

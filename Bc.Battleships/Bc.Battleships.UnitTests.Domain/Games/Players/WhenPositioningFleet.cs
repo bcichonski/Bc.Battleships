@@ -10,9 +10,10 @@ namespace Bc.Battleships.UnitTests.Domain.Games.Players
         [Fact]
         public void AllShipsShouldBePositioned()
         {
-            var player = new ComputerPlayerBuilder()
-                .WithNoFleet()
-                .Build();
+            var player = new GameBuilder()
+                .WithNotPositionedFleet()
+                .Build()
+                .ComputerPlayer;
 
             player.PositionShips();
 

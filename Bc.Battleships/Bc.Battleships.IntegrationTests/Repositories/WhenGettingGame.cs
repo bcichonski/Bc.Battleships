@@ -3,6 +3,7 @@ using Bc.Battleships.Domain.AggregateRoots.Games;
 using Bc.Battleships.Domain.Repositories;
 using Bc.Battleships.Tests.Common.Builders;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -18,7 +19,7 @@ namespace Bc.Battleships.IntegrationTests.Repositories
             await InScope(async (_) =>
             {
                 var gameRepository = ServiceProvider.GetService<IGamesRepository>();
-                var game = await gameRepository!.Get();
+                var game = await gameRepository!.Get(CancellationToken.None);
 
                 game!.Should().NotBeNull();
                 game!.Id.Value.Should().NotBeEmpty();
@@ -33,7 +34,7 @@ namespace Bc.Battleships.IntegrationTests.Repositories
             await InScope(async (_) =>
             {
                 var gameRepository = ServiceProvider.GetService<IGamesRepository>();
-                var game = await gameRepository!.Get();
+                var game = await gameRepository!.Get(CancellationToken.None);
 
                 game!.ComputerPlayer.Should().NotBeNull();
                 game!.HumanPlayer.Should().NotBeNull();
@@ -48,7 +49,7 @@ namespace Bc.Battleships.IntegrationTests.Repositories
             await InScope(async (_) =>
             {
                 var gameRepository = ServiceProvider.GetService<IGamesRepository>();
-                var game = await gameRepository!.Get();
+                var game = await gameRepository!.Get(CancellationToken.None);
 
                 game!.ComputerPlayer.CurrentHitPoints.Value.Should().BeGreaterThan(0);
             });
@@ -66,7 +67,7 @@ namespace Bc.Battleships.IntegrationTests.Repositories
         private Task AssumeGameInDb()
             => InScope(async dbContext =>
                 {
-                    await dbContext!.AddAsync(new Game());
+                    await dbContext!.AddAsync(new GameBuilder().Build());
                     await dbContext.SaveChangesAsync();
                 });
     }

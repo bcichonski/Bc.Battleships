@@ -11,17 +11,18 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Ships
     public class Ship
     {
         public ShipId Id { get; }
-        public ComputerPlayer Owner { get; }
+        public ComputerPlayer? Owner { get; private set; }
+
         public ShipLayout Layout { get; }
         public Coordinates Coordinates { get; }
         public Length Length { get; }
         public IList<ShipCompartment> Compartments { get; }
+
         public HitPoints CurrentHitPoints => new HitPoints(Compartments.Where(x => x.State == ShipCompartmentState.Dry).Count());
 
-        public Ship(ComputerPlayer owner, Coordinates coordinates, ShipLayout layout, Length length)
+        public Ship(Coordinates coordinates, ShipLayout layout, Length length)
         {
             Id = new ShipId();
-            Owner = owner;
             Layout = layout;
             Coordinates = coordinates;
             Length = length;
@@ -29,10 +30,20 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Ships
             Compartments = ShipCompartmentsProvider.GetCompartments(this).ToList();
         }
 
+        public Ship(ComputerPlayer owner, Coordinates coordinates, ShipLayout layout, Length length) : this(coordinates, layout, length)
+        {
+            SetOwner(owner);
+        }
+
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         private Ship()
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         { }
+
+        internal void SetOwner(ComputerPlayer owner)
+        {
+            Owner = owner;
+        }
 
         public ShootResult Hit(Coordinates coordinates)
         {

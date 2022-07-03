@@ -14,7 +14,7 @@ namespace Bc.Battleships.UnitTests.Domain.Games.Players
                 .Build();
             var playerHitPoints = player.CurrentHitPoints;
 
-            player.BraceForImpact(new Coordinates(2, 1));
+            player.IncomingShot(new Coordinates(2, 1));
 
             player.CurrentHitPoints.Should().Be(playerHitPoints.Substract(1));
         }
@@ -26,7 +26,7 @@ namespace Bc.Battleships.UnitTests.Domain.Games.Players
                 .Build();
             var playerHitPoints = player.CurrentHitPoints;
 
-            player.BraceForImpact(new Coordinates(2, 3));
+            player.IncomingShot(new Coordinates(2, 3));
 
             player.CurrentHitPoints.Should().Be(playerHitPoints);
         }

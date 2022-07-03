@@ -14,7 +14,7 @@ namespace Bc.Battleships.IntegrationTests.Ships
         {
             var (ship, player) = AssumePlayerWithOneSmallShipIsCreated(1);
 
-            player.BraceForImpact(new Coordinates(1, 1));
+            player.IncomingShot(new Coordinates(1, 1));
 
             AssertDomainEventWasPublished<AbandonTheShipDomainEvent>(x => x.Ship == ship);
         }
@@ -25,7 +25,7 @@ namespace Bc.Battleships.IntegrationTests.Ships
         {
             var (_, player) = AssumePlayerWithOneSmallShipIsCreated(1);
 
-            player.BraceForImpact(new Coordinates(1, 1));
+            player.IncomingShot(new Coordinates(1, 1));
 
             AssertDomainEventWasNotPublished<AbandonTheShipDomainEvent>();
         }

@@ -15,18 +15,19 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games
 
         public GameState GameState { get; }
 
-        public Game()
+        public Game(GameId id, ComputerPlayer computerPlayer)
         {
-            Id = new GameId();
+            Id = id;
 
-            ComputerPlayer = new ComputerPlayer(this);
+            ComputerPlayer = computerPlayer;
 
             GameState = GameState.Active;
         }
 
-        internal Game(ComputerPlayer computerPlayer) : this()
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        private Game()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
-            ComputerPlayer = computerPlayer;
         }
 
         public void PositionFleets()
@@ -35,6 +36,6 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games
         }
 
         public ShootResult Shoot(Coordinates coordinates)
-            => ComputerPlayer.BraceForImpact(coordinates);
+            => ComputerPlayer.IncomingShot(coordinates);
     }
 }

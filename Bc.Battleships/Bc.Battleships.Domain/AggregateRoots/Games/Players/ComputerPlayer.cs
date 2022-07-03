@@ -17,15 +17,13 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
             };
 
         public IList<Ship>? Ships { get; private set; } = null;
-        public Game Game { get; }
+        public IList<ShotCoordinates> CoordinatesShoot { get; } = new List<ShotCoordinates>();
 
-        public ComputerPlayer(Game game) : base()
+        public Game? Game { get; private set; }
+
+        public ComputerPlayer(Game? game, IList<Ship>? ships)
         {
             Game = game;
-        }
-
-        internal ComputerPlayer(Game game, IList<Ship>? ships) : this(game)
-        {
             Ships = ships;
         }
 
@@ -33,17 +31,30 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
         private ComputerPlayer() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
+        internal void SetOwner(Game game)
+        {
+            Game = game;
+        }
+
         public void PositionShips()
         {
             Ensure.That(Ships is null).IsTrue();
+            Ensure.That(Game).IsNotNull();
 
+#pragma warning disable CS8604 // Possible null reference argument.
             var fleetFactory = new FleetFactory(Game);
+#pragma warning restore CS8604 // Possible null reference argument.
 
             Ships = fleetFactory.BuildAndPositionShips().ToList();
         }
 
-        public ShootResult BraceForImpact(Coordinates coordinates)
+        public ShootResult IncomingShot(Coordinates coordinates)
         {
+            if(CoordinatesShoot.All(x => x.Coordinates != coordinates))
+            {
+                CoordinatesShoot.Add(new ShotCoordinates(this, coordinates));
+            }
+
             foreach(var ship in Ships!)
             {
                 if(ship.Hit(coordinates) == ShootResult.Hit)

@@ -11,7 +11,7 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
             Id = new PlayerId();
         }
 
-        private Player(PlayerId id)
+        internal Player(PlayerId id)
         {
             Id = id;
         }

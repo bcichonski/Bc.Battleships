@@ -14,6 +14,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="10.0.1" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="6.0.4" />
   </ItemGroup>
 
@@ -26,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bc.Battleships.Persistence\Bc.Battleships.Persistence.csproj" />
+    <ProjectReference Include="..\Bc.Battleships.Server\Bc.Battleships.Server.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

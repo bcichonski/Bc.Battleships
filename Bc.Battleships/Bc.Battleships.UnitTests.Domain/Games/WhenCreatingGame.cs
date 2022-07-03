@@ -1,5 +1,7 @@
 using FluentAssertions;
 using Bc.Battleships.Domain.AggregateRoots.Games;
+using Bc.Battleships.Domain.ValueObjects;
+using Bc.Battleships.Tests.Common.Builders;
 using Xunit;
 
 namespace Bc.Battleships.UnitTests.Domain.Games
@@ -9,7 +11,7 @@ namespace Bc.Battleships.UnitTests.Domain.Games
         [Fact]
         public void ItShouldHaveAnId()
         {
-            var game = new Game();
+            var game = new Game(new GameId(), new ComputerPlayerBuilder().Build());
 
             game.Id.Value.Should().NotBeEmpty();
         }
@@ -17,7 +19,7 @@ namespace Bc.Battleships.UnitTests.Domain.Games
         [Fact]
         public void ItShouldHaveComputerPlayer()
         {
-            var game = new Game();
+            var game = new Game(new GameId(), new ComputerPlayerBuilder().Build());
 
             game.ComputerPlayer.Should().NotBeNull();
         }
@@ -25,7 +27,7 @@ namespace Bc.Battleships.UnitTests.Domain.Games
         [Fact]
         public void ItShouldHaveHumanPlayer()
         {
-            var game = new Game();
+            var game = new Game(new GameId(), new ComputerPlayerBuilder().Build());
 
             game.HumanPlayer.Should().NotBeNull();
         }
@@ -33,7 +35,9 @@ namespace Bc.Battleships.UnitTests.Domain.Games
         [Fact]
         public void FleetShouldBePositioned()
         {
-            var game = new Game();
+            var game = new GameBuilder()
+                .WithNotPositionedFleet()
+                .Build();
 
             game.PositionFleets();
 

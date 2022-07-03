@@ -46,15 +46,35 @@ namespace Bc.Battleships.Persistence.Migrations
 
                             b1.ToTable("Game");
 
-                            b1.WithOwner()
+                            b1.WithOwner("Game")
                                 .HasForeignKey("GameId");
+
+                            b1.OwnsMany("Bc.Battleships.Domain.AggregateRoots.Games.Players.ShotCoordinates", "CoordinatesShoot", b2 =>
+                                {
+                                    b2.Property<Guid>("OwnerGameId")
+                                        .HasColumnType("TEXT");
+
+                                    b2.Property<int>("Id")
+                                        .ValueGeneratedOnAdd()
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<string>("Coordinates")
+                                        .IsRequired()
+                                        .HasColumnType("TEXT");
+
+                                    b2.HasKey("OwnerGameId", "Id");
+
+                                    b2.ToTable("ShotCoordinates");
+
+                                    b2.WithOwner("Owner")
+                                        .HasForeignKey("OwnerGameId");
+
+                                    b2.Navigation("Owner");
+                                });
 
                             b1.OwnsMany("Bc.Battleships.Domain.AggregateRoots.Games.Ships.Ship", "Ships", b2 =>
                                 {
                                     b2.Property<Guid>("Id")
-                                        .HasColumnType("TEXT");
-
-                                    b2.Property<Guid>("ComputerPlayerGameId")
                                         .HasColumnType("TEXT");
 
                                     b2.Property<string>("Coordinates")
@@ -67,14 +87,17 @@ namespace Bc.Battleships.Persistence.Migrations
                                     b2.Property<int>("Length")
                                         .HasColumnType("INTEGER");
 
+                                    b2.Property<Guid>("OwnerGameId")
+                                        .HasColumnType("TEXT");
+
                                     b2.HasKey("Id");
 
-                                    b2.HasIndex("ComputerPlayerGameId");
+                                    b2.HasIndex("OwnerGameId");
 
                                     b2.ToTable("Ship");
 
-                                    b2.WithOwner()
-                                        .HasForeignKey("ComputerPlayerGameId");
+                                    b2.WithOwner("Owner")
+                                        .HasForeignKey("OwnerGameId");
 
                                     b2.OwnsMany("Bc.Battleships.Domain.AggregateRoots.Games.Ships.ShipCompartment", "Compartments", b3 =>
                                         {
@@ -102,7 +125,13 @@ namespace Bc.Battleships.Persistence.Migrations
                                         });
 
                                     b2.Navigation("Compartments");
+
+                                    b2.Navigation("Owner");
                                 });
+
+                            b1.Navigation("CoordinatesShoot");
+
+                            b1.Navigation("Game");
 
                             b1.Navigation("Ships");
                         });

@@ -22,6 +22,12 @@ namespace Bc.Battleships.Persistence.Configurations
                 x.Property(y => y.Id)
                     .HasConversion<PlayerIdConverter>();
                 x.WithOwner(y => y.Game);
+                x.OwnsMany(y => y.CoordinatesShoot, y =>
+                {
+                    y.WithOwner(z => z.Owner);
+                    y.Property(z => z.Coordinates)
+                        .HasConversion<CoordinatesConverter>();
+                });
 
                 x.OwnsMany(y => y.Ships, y =>
                 {

@@ -1,12 +1,13 @@
 ﻿using Bc.Battleships.Domain.AggregateRoots.Games;
 using Bc.Battleships.Domain.AggregateRoots.Games.Players;
 using Bc.Battleships.Domain.AggregateRoots.Games.Ships;
-using Bc.Battleships.Tests.Common.Extensions;
+using Bc.Battleships.Domain.ValueObjects;
 
 namespace Bc.Battleships.Tests.Common.Builders
 {
     public class ComputerPlayerBuilder
     {
+        private ISet<Coordinates>? _coordinatesShot;
         private IList<Ship>? _ships = CreateDefaultFleet();
         private Game? _game;
 
@@ -22,22 +23,53 @@ namespace Bc.Battleships.Tests.Common.Builders
             return this;
         }
 
-        public ComputerPlayerBuilder WithNoFleet()
+        public ComputerPlayerBuilder WithFleetPositioned(bool positioned)
         {
-            _ships = null;
+            if (!positioned)
+            {
+                _ships = null;
+            }
+
+            return this;
+        }
+
+        public ComputerPlayerBuilder WithSetOfCoordinatesShot(ISet<Coordinates> coordinatesShot)
+        {
+            _coordinatesShot = coordinatesShot;
             return this;
         }
 
         public ComputerPlayer Build()
         {
-            _game ??= new GameBuilder()
-                .Build();
-
             var computerPlayer = new ComputerPlayer(_game, _ships);
 
-            _game.SetPrivatePropertyValue<ComputerPlayer>(nameof(_game.ComputerPlayer), computerPlayer);
+            if(_ships != null)
+            {
+                SetShipsOwner(computerPlayer);
+            }
+
+            if(_coordinatesShot != null)
+            {
+                ShootAll(computerPlayer, _coordinatesShot);
+            }
 
             return computerPlayer;
+        }
+
+        private void ShootAll(ComputerPlayer computerPlayer, ISet<Coordinates> coordinatesShot)
+        {
+            foreach (var coordinates in coordinatesShot)
+            {
+                computerPlayer.IncomingShot(coordinates);
+            }
+        }
+
+        private void SetShipsOwner(ComputerPlayer computerPlayer)
+        {
+            foreach (var ship in _ships!)
+            {
+                ship.SetOwner(computerPlayer);
+            }
         }
 
         private static IList<Ship>? CreateDefaultFleet()

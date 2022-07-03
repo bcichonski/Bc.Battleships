@@ -14,11 +14,11 @@ namespace Bc.Battleships.Persistence.Repositories
             _battleshipsDbContext = battleshipsDbContext ?? throw new ArgumentNullException(nameof(battleshipsDbContext));
         }
 
-        public Task<Game?> Get()
+        public Task<Game?> Get(CancellationToken cancellationToken)
             => _battleshipsDbContext
                 .Set<Game>()
                 .Where(x => x.GameState == GameState.Active)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(cancellationToken);
 
 
         public void Add(Game game) => _battleshipsDbContext.Add(game);

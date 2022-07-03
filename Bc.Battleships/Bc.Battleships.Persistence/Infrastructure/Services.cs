@@ -12,6 +12,9 @@ namespace Bc.Battleships.Persistence.Infrastructure
         {
             serviceCollection.AddDbContext<BattleshipsDbContext, BattleshipsDbContext>(
                 (serviceProvider, dbContextOptionsBuilder) => dbContextOptionsBuilder
+                    /*.EnableSensitiveDataLogging()
+                    .EnableDetailedErrors()
+                    .LogTo(Console.WriteLine)*/
                     .UseSqlite(serviceProvider!
                         .GetService<IPersistenceConfigurationProvider>()!
                         .ConnectionString),

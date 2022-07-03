@@ -51,18 +51,20 @@ namespace Bc.Battleships.Persistence.Migrations
 
                             b1.OwnsMany("Bc.Battleships.Domain.AggregateRoots.Games.Players.ShotCoordinates", "CoordinatesShoot", b2 =>
                                 {
-                                    b2.Property<Guid>("OwnerGameId")
-                                        .HasColumnType("TEXT");
-
-                                    b2.Property<int>("Id")
+                                    b2.Property<Guid>("Id")
                                         .ValueGeneratedOnAdd()
-                                        .HasColumnType("INTEGER");
+                                        .HasColumnType("TEXT");
 
                                     b2.Property<string>("Coordinates")
                                         .IsRequired()
                                         .HasColumnType("TEXT");
 
-                                    b2.HasKey("OwnerGameId", "Id");
+                                    b2.Property<Guid>("OwnerGameId")
+                                        .HasColumnType("TEXT");
+
+                                    b2.HasKey("Id");
+
+                                    b2.HasIndex("OwnerGameId");
 
                                     b2.ToTable("ShotCoordinates");
 

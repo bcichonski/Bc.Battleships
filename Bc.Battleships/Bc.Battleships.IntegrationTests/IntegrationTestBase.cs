@@ -45,9 +45,9 @@ namespace Bc.Battleships.IntegrationTests
 
         public async Task InScope(Func<BattleshipsDbContext, Task> action)
         {
-            using (ServiceProvider.CreateAsyncScope())
+            using (var scope = ServiceProvider.CreateAsyncScope())
             {
-                var dbContext = ServiceProvider.GetService<BattleshipsDbContext>();
+                var dbContext = scope.ServiceProvider.GetService<BattleshipsDbContext>();
                 
                 await action(dbContext!);
             }
@@ -55,9 +55,9 @@ namespace Bc.Battleships.IntegrationTests
 
         public void InScope(Action<BattleshipsDbContext> action)
         {
-            using (ServiceProvider.CreateScope())
+            using (var scope = ServiceProvider.CreateScope())
             {
-                var dbContext = ServiceProvider.GetService<BattleshipsDbContext>();
+                var dbContext = scope.ServiceProvider.GetService<BattleshipsDbContext>();
 
                 action(dbContext!);
             }

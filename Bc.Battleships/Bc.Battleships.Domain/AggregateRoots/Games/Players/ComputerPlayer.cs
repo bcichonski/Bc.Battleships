@@ -17,7 +17,7 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
             };
 
         public IList<Ship>? Ships { get; private set; } = null;
-        public IList<ShotCoordinates> CoordinatesShoot { get; } = new List<ShotCoordinates>();
+        public IList<ShotCoordinates> CoordinatesShoot { get; }
 
         public Game? Game { get; private set; }
 
@@ -25,6 +25,7 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
         {
             Game = game;
             Ships = ships;
+            CoordinatesShoot = new List<ShotCoordinates>();
         }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -52,7 +53,7 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
         {
             if(CoordinatesShoot.All(x => x.Coordinates != coordinates))
             {
-                CoordinatesShoot.Add(new ShotCoordinates(this, coordinates));
+                CoordinatesShoot.Add(new ShotCoordinates(coordinates));
             }
 
             foreach(var ship in Ships!)

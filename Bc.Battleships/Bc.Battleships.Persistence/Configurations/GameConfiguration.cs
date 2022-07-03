@@ -24,7 +24,7 @@ namespace Bc.Battleships.Persistence.Configurations
                 x.WithOwner(y => y.Game);
                 x.OwnsMany(y => y.CoordinatesShoot, y =>
                 {
-                    y.WithOwner(z => z.Owner);
+                    y.HasKey(z => z.Id);
                     y.Property(z => z.Coordinates)
                         .HasConversion<CoordinatesConverter>();
                 });

@@ -11,10 +11,10 @@ namespace Bc.Battleships.Server.Services
     internal static class GameToGameDtoConverter
     {
         public static GameDto Convert(Game? game)
-            => new GameDto(ConvertBoard(game), game.ComputerPlayer.CurrentHitPoints.Value);
+            => new GameDto(ConvertBoard(game), game!.ComputerPlayer.CurrentHitPoints.Value);
 
         private static BoardDto ConvertBoard(Game? game)
-            => new BoardDto(GetBoardState(game.GameContext.BoardSize.Value, game.ComputerPlayer));
+            => new BoardDto(GetBoardState(game!.GameContext.BoardSize.Value, game.ComputerPlayer));
 
         private static BoardFieldState[,] GetBoardState(int boardSize, ComputerPlayer computerPlayer)
         {
@@ -66,12 +66,12 @@ namespace Bc.Battleships.Server.Services
 
         private static BoardFieldState ToBoardState(ShipCompartment shipCompartment, HashSet<Coordinates> boardShoot)
         {
-            if(shipCompartment.State == ShipCompartmentState.Flooded)
+            if (shipCompartment.State == ShipCompartmentState.Flooded)
             {
                 return BoardFieldState.Hit;
             }
-            
-            if(boardShoot.Contains(shipCompartment.Coordinates))
+
+            if (boardShoot.Contains(shipCompartment.Coordinates))
             {
                 return BoardFieldState.Miss;
             }

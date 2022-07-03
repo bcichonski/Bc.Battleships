@@ -4,13 +4,11 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
 {
     public class ShotCoordinates
     {
-        public ComputerPlayer Owner { get; }
-
+        public Guid Id { get; }
         public Coordinates Coordinates { get; }
 
-        public ShotCoordinates(ComputerPlayer owner, Coordinates coordinates)
+        public ShotCoordinates(Coordinates coordinates)
         {
-            Owner = owner;
             Coordinates = coordinates;
         }
 

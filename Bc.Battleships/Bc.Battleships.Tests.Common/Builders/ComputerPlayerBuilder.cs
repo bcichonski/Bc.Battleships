@@ -7,7 +7,7 @@ namespace Bc.Battleships.Tests.Common.Builders
 {
     public class ComputerPlayerBuilder
     {
-        private ISet<Coordinates>? _coordinatesShot;
+        private ISet<Coordinates>? _coordinatesShot = new HashSet<Coordinates>() { new Coordinates(1, 1) };
         private IList<Ship>? _ships = CreateDefaultFleet();
         private Game? _game;
 
@@ -43,12 +43,12 @@ namespace Bc.Battleships.Tests.Common.Builders
         {
             var computerPlayer = new ComputerPlayer(_game, _ships);
 
-            if(_ships != null)
+            if (_ships != null)
             {
                 SetShipsOwner(computerPlayer);
             }
 
-            if(_coordinatesShot != null)
+            if (_coordinatesShot != null)
             {
                 ShootAll(computerPlayer, _coordinatesShot);
             }

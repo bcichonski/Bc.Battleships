@@ -1,6 +1,6 @@
 ﻿namespace Bc.Battleships.Domain.ValueObjects
 {
-    public struct GameId
+    public record GameId
     {
         public Guid Value { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using Bc.Battleships.Domain.AggregateRoots.Games;
 using Bc.Battleships.Domain.Repositories;
+using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Domain.ValueObjects.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,8 +18,12 @@ namespace Bc.Battleships.Persistence.Repositories
         public Task<Game?> Get(CancellationToken cancellationToken)
             => _battleshipsDbContext
                 .Set<Game>()
-                .Where(x => x.GameState == GameState.Active)
-                .FirstOrDefaultAsync(cancellationToken);
+                .FirstOrDefaultAsync(x => x.GameState == GameState.Active, cancellationToken);
+
+        public Task<Game?> GetById(GameId gameId, CancellationToken cancellationToken)
+            => _battleshipsDbContext
+                .Set<Game>()
+                .FirstOrDefaultAsync(x => x.Id == gameId, cancellationToken);
 
 
         public void Add(Game game) => _battleshipsDbContext.Add(game);

@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { Container, Row } from 'reactstrap';
+import CurrentHitPoints from './CurrentHitPoints';
+import Board from './Board'
 
 const Game = () => {
     const [state, setState] = useState({
@@ -25,9 +28,20 @@ const Game = () => {
     }, [])
 
     if (state.state === 'ok') {
+
+        if(state.data.isGameActive) {
+            return (
+                <Container>
+                    <Row><CurrentHitPoints hp={state.data.currentHitPoints}></CurrentHitPoints></Row>
+                    <Row><Board rows={state.data.board.boardRows}></Board></Row>
+                    <Row><pre>{JSON.stringify(state.data, null, 2)}</pre></Row>
+                </Container>
+            )
+        }
+
         return (
             <div>
-                {JSON.stringify(state.data)}
+                CreateNewGame
             </div>
         )
     }

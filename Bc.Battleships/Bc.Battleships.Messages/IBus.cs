@@ -1,6 +1,4 @@
-﻿using Bc.Battleships.Messages;
-
-namespace Bc.Battleships.Domain.Events
+﻿namespace Bc.Battleships.Messages
 {
     public interface IBus
     {

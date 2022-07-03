@@ -1,7 +1,6 @@
 ﻿using Bc.Battleships.Domain.Repositories;
-using Bc.Battleships.Persistence.Repositories;
-using Bc.Battleships.Server.DTOs;
-using Bc.Battleships.Server.Queries;
+using Bc.Battleships.Messages.DTOs;
+using Bc.Battleships.Messages.Queries;
 using Bc.Battleships.Server.Services;
 using MediatR;
 

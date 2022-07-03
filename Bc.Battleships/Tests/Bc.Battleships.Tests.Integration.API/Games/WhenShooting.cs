@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Bc.Battleships.Domain.AggregateRoots.Games;
 using Bc.Battleships.Domain.ValueObjects;
-using Bc.Battleships.Server.Commands;
+using Bc.Battleships.Messages.Commands;
 using Bc.Battleships.Tests.Common.Builders;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +19,7 @@ namespace Bc.Battleships.Tests.Integration.API.Games
             var game = await AssumeGameInDb();
             var currentHitPoints = game.ComputerPlayer.CurrentHitPoints.Value;
             var expectedCoordinates = new Coordinates(2, 1);
-            var shootCommand = new ShootCommand(expectedCoordinates);
+            var shootCommand = new ShootCommand(expectedCoordinates.Column, expectedCoordinates.Row);
             var mediator = ServiceProvider.GetRequiredService<IMediator>();
 
             var result = await mediator!.Send(shootCommand, CancellationToken.None);
@@ -34,7 +34,7 @@ namespace Bc.Battleships.Tests.Integration.API.Games
             var game = await AssumeGameInDb();
             var currentHitPoints = game.ComputerPlayer.CurrentHitPoints.Value;
             var expectedCoordinates = new Coordinates(3, 3);
-            var shootCommand = new ShootCommand(expectedCoordinates);
+            var shootCommand = new ShootCommand(expectedCoordinates.Column, expectedCoordinates.Row);
             var mediator = ServiceProvider.GetRequiredService<IMediator>();
 
             var result = await mediator!.Send(shootCommand, CancellationToken.None);

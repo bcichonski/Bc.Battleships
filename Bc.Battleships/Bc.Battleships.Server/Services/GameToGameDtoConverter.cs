@@ -4,7 +4,7 @@ using Bc.Battleships.Domain.AggregateRoots.Games.Players;
 using Bc.Battleships.Domain.AggregateRoots.Games.Ships;
 using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Domain.ValueObjects.Enums;
-using Bc.Battleships.Server.DTOs;
+using Bc.Battleships.Messages.DTOs;
 
 namespace Bc.Battleships.Server.Services
 {
@@ -57,12 +57,6 @@ namespace Bc.Battleships.Server.Services
                 board[ship.Coordinates.Column + i, ship.Coordinates.Row] = ToBoardState(ship.Compartments[i], boardShoot);
             }
         }
-
-        static readonly Dictionary<ShipCompartmentState, BoardFieldState> shipCompartmentStateToBoardFieldStateMap = new Dictionary<ShipCompartmentState, BoardFieldState>
-        {
-            [ShipCompartmentState.Dry] = DTOs.BoardFieldState.Miss,
-            [ShipCompartmentState.Flooded] = DTOs.BoardFieldState.Hit,
-        };
 
         private static BoardFieldState ToBoardState(ShipCompartment shipCompartment, HashSet<Coordinates> boardShoot)
         {

@@ -1,4 +1,4 @@
-﻿namespace Bc.Battleships.Server.DTOs
+﻿namespace Bc.Battleships.Messages.DTOs
 {
     public enum BoardFieldState
     {

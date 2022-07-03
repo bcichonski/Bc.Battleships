@@ -1,4 +1,4 @@
-﻿namespace Bc.Battleships.Server.CommandsResults
+﻿namespace Bc.Battleships.Messages.CommandsResults
 {
     public class ShootResult
     {

@@ -1,6 +1,6 @@
 ﻿using EnsureThat;
 
-namespace Bc.Battleships.Server.DTOs
+namespace Bc.Battleships.Messages.DTOs
 {
     public class BoardDto
     {

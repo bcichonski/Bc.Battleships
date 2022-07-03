@@ -10,6 +10,7 @@ using NSubstitute;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System;
+using Bc.Battleships.Messages;
 
 namespace Bc.Battleships.Tests.Integration.API
 {

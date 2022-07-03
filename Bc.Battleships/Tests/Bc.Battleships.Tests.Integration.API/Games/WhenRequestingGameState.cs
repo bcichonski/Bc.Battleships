@@ -1,12 +1,12 @@
-﻿using Bc.Battleships.Server.Queries;
-using Microsoft.Extensions.DependencyInjection;
-using Xunit;
-using FluentAssertions;
-using System.Threading.Tasks;
-using System.Threading;
-using MediatR;
-using Bc.Battleships.Tests.Common.Builders;
+﻿using FluentAssertions;
 using Bc.Battleships.Domain.AggregateRoots.Games;
+using Bc.Battleships.Messages.Queries;
+using Bc.Battleships.Tests.Common.Builders;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+using System.Threading;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace Bc.Battleships.Tests.Integration.API.Games
 {

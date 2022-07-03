@@ -1,5 +1,7 @@
-﻿using Bc.Battleships.Server.DTOs;
-using Bc.Battleships.Server.Queries;
+﻿using Bc.Battleships.Messages.Commands;
+using Bc.Battleships.Messages.CommandsResults;
+using Bc.Battleships.Messages.DTOs;
+using Bc.Battleships.Messages.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,9 +22,10 @@ namespace Bc.Battleships.Controllers
 
         [HttpGet]
         public async Task<GameDto> Get()
-            =>  await _mediator.Send(new GetCurrentGameQuery());
+            => await _mediator.Send(new GetCurrentGameQuery());
 
-        //[HttpPost]
-        //public async Task<>
+        [HttpPut]
+        public async Task<ShootResult> Shoot(ShootCommand shootCommand)
+            => await _mediator.Send(shootCommand);
     }
 }

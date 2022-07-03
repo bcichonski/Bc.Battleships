@@ -1,6 +1,4 @@
-﻿using Bc.Battleships.Domain.AggregateRoots.Games;
-
-namespace Bc.Battleships.Server.DTOs
+﻿namespace Bc.Battleships.Messages.DTOs
 {
     public class GameDto
     {

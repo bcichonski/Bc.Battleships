@@ -1,4 +1,5 @@
 using Bc.Battleships.Domain.Events;
+using Bc.Battleships.Messages;
 using Bc.Battleships.Persistence;
 using Bc.Battleships.Persistence.Infrastructure;
 using Bc.Battleships.Persistence.Providers;

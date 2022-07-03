@@ -1,6 +1,7 @@
 ﻿using Bc.Battleships.Domain.Repositories;
-using Bc.Battleships.Server.Commands;
-using Bc.Battleships.Server.CommandsResults;
+using Bc.Battleships.Domain.ValueObjects;
+using Bc.Battleships.Messages.Commands;
+using Bc.Battleships.Messages.CommandsResults;
 using MediatR;
 using ShootResultEnum = Bc.Battleships.Domain.ValueObjects.Enums.ShootResult;
 
@@ -19,7 +20,7 @@ namespace Bc.Battleships.Server.CommandHandlers
         {
             var game = await _gamesRepository.Get(cancellationToken);
 
-            var result = game!.Shoot(request.Coordinates);
+            var result = game!.Shoot(new Coordinates(request.Column, request.Row));
 
             return new ShootResult(result == ShootResultEnum.Hit, game.ComputerPlayer.CurrentHitPoints.Value);
         }

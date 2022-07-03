@@ -1,4 +1,6 @@
-﻿namespace Bc.Battleships.Domain.Events
+﻿using Bc.Battleships.Messages;
+
+namespace Bc.Battleships.Domain.Events
 {
     public class DomainEventBus : IDomainEventBus
     {

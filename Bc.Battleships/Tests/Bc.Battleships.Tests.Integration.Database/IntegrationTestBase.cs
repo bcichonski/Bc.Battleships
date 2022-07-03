@@ -2,6 +2,7 @@ using Bc.Battleships.Domain.Events;
 using Bc.Battleships.Persistence;
 using Bc.Battleships.Persistence.Infrastructure;
 using Bc.Battleships.Persistence.Providers;
+using Bc.Battleships.Tests.Common;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using System;
@@ -12,7 +13,7 @@ namespace Bc.Battleships.Tests.Integration.Database
 {
     public class IntegrationTestBase : IDisposable
     {
-        protected ServiceProvider ServiceProvider { get; }
+        protected IServiceProvider ServiceProvider { get; }
         private IBus _busSubstitute { get; }
 
         public IntegrationTestBase()
@@ -22,8 +23,8 @@ namespace Bc.Battleships.Tests.Integration.Database
             ConfigureServices(services);
 
             ServiceProvider = services.BuildServiceProvider();
-            _busSubstitute = Substitute.For<IBus>();
 
+            _busSubstitute = Substitute.For<IBus>();
             DomainEventBus.Use(_busSubstitute);
 
             InitializeDatabase().Wait();

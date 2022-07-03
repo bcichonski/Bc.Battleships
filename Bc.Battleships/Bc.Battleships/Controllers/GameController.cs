@@ -21,5 +21,8 @@ namespace Bc.Battleships.Controllers
         [HttpGet]
         public async Task<GameDto> Get()
             =>  await _mediator.Send(new GetCurrentGameQuery());
+
+        //[HttpPost]
+        //public async Task<>
     }
 }

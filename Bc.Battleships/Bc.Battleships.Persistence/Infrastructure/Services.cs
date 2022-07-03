@@ -8,7 +8,7 @@ namespace Bc.Battleships.Persistence.Infrastructure
 {
     public static class Services
     {
-        public static void Configure(ServiceCollection serviceCollection)
+        public static void Configure(IServiceCollection serviceCollection)
         {
             serviceCollection.AddDbContext<BattleshipsDbContext, BattleshipsDbContext>(
                 (serviceProvider, dbContextOptionsBuilder) => dbContextOptionsBuilder

@@ -1,9 +1,8 @@
 ﻿using Bc.Battleships.Persistence.Providers;
-using System.IO;
 
-namespace Bc.Battleships.Tests.Integration.Database
+namespace Bc.Battleships.Tests.Common
 {
-    internal class TestConfigurationProvider : IPersistenceConfigurationProvider
+    public class TestConfigurationProvider : IPersistenceConfigurationProvider
     {
         public string ConnectionString => $"Data Source = battleships.tests.{Path.GetRandomFileName()}.db";
     }

@@ -46,11 +46,11 @@ namespace Bc.Battleships.Tests.Common.Builders
             if (_ships != null)
             {
                 SetShipsOwner(computerPlayer);
-            }
 
-            if (_coordinatesShot != null)
-            {
-                ShootAll(computerPlayer, _coordinatesShot);
+                if (_coordinatesShot != null)
+                {
+                    ShootAll(computerPlayer, _coordinatesShot);
+                }
             }
 
             return computerPlayer;

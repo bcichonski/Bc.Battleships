@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Bc.Battleships.IntegrationTests.Games
+namespace Bc.Battleships.Tests.Integration.Database.Games
 {
     public class WhenBeingShootAt : IntegrationTestBase
     {

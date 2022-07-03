@@ -5,7 +5,7 @@ using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Tests.Common.Builders;
 using Xunit;
 
-namespace Bc.Battleships.IntegrationTests.Ships
+namespace Bc.Battleships.Tests.Integration.Database.Ships
 {
     public class WhenBeingShootAt : IntegrationTestBase
     {

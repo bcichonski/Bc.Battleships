@@ -8,7 +8,7 @@ using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace Bc.Battleships.IntegrationTests
+namespace Bc.Battleships.Tests.Integration.Database
 {
     public class IntegrationTestBase : IDisposable
     {

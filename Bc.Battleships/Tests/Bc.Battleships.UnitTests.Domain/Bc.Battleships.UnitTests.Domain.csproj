@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bc.Battleships.Domain\Bc.Battleships.Domain.csproj" />
+    <ProjectReference Include="..\..\Bc.Battleships.Domain\Bc.Battleships.Domain.csproj" />
     <ProjectReference Include="..\Bc.Battleships.Tests.Common\Bc.Battleships.Tests.Common.csproj" />
   </ItemGroup>
 

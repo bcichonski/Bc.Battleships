@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Bc.Battleships.IntegrationTests.Repositories
+namespace Bc.Battleships.Tests.Integration.Database.Repositories
 {
     public class WhenGettingGame : IntegrationTestBase
     {

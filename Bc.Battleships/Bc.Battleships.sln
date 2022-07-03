@@ -9,19 +9,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bc.Battleships.Domain", "Bc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4F805689-3CC1-48B5-A1E6-53E1DCEA292F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bc.Battleships.UnitTests.Domain", "Bc.Battleships.UnitTests.Domain\Bc.Battleships.UnitTests.Domain.csproj", "{84DA61BA-2733-4304-AA9A-5B775129FCFB}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bc.Battleships.IntegrationTests", "Bc.Battleships.IntegrationTests\Bc.Battleships.IntegrationTests.csproj", "{5533E2BD-2ED4-465B-8D50-BAAF2C41E350}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bc.Battleships.Persistence", "Bc.Battleships.Persistence\Bc.Battleships.Persistence.csproj", "{11D05B76-6A96-458F-BD6C-D862E004924A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bc.Battleships.EFMigrationsHelper", "Bc.Battleships.EFMigrationsHelper\Bc.Battleships.EFMigrationsHelper.csproj", "{BECE3BB6-03D8-451E-B158-800B486A3C19}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bc.Battleships.Tests.Common", "Bc.Battleships.Tests.Common\Bc.Battleships.Tests.Common.csproj", "{49DCB8C1-905E-4256-8B19-A8C0D69D11A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bc.Battleships.Tests.Common", "Tests\Bc.Battleships.Tests.Common\Bc.Battleships.Tests.Common.csproj", "{49DCB8C1-905E-4256-8B19-A8C0D69D11A7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bc.Battleships.Messages", "Bc.Battleships.Messages\Bc.Battleships.Messages.csproj", "{8019A9D8-EF51-4DDD-9F9E-D32567FC8FAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bc.Battleships.Server", "Bc.Battleships.Server\Bc.Battleships.Server.csproj", "{04F2B853-0B47-47BD-A585-A287FB6A04DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bc.Battleships.Server", "Bc.Battleships.Server\Bc.Battleships.Server.csproj", "{04F2B853-0B47-47BD-A585-A287FB6A04DC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bc.Battleships.UnitTests.Domain", "Tests\Bc.Battleships.UnitTests.Domain\Bc.Battleships.UnitTests.Domain.csproj", "{84DA61BA-2733-4304-AA9A-5B775129FCFB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bc.Battleships.Tests.Integration.Database", "Tests\Bc.Battleships.Tests.Integration.Database\Bc.Battleships.Tests.Integration.Database.csproj", "{5533E2BD-2ED4-465B-8D50-BAAF2C41E350}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bc.Battleships.EFMigrationsHelper", "Bc.Battleships.EFMigrationsHelper\Bc.Battleships.EFMigrationsHelper.csproj", "{BECE3BB6-03D8-451E-B158-800B486A3C19}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

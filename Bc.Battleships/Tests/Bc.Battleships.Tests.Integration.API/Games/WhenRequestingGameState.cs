@@ -18,8 +18,22 @@ namespace Bc.Battleships.Tests.Integration.API.Games
             {
                 var result = await testContext.Mediator.Send(gameQuery, CancellationToken.None);
 
+                result.IsGameActive.Should().BeTrue();
                 result.CurrentHitPoints.Should().BeGreaterThan(0);
                 result.Board.BoardSize.Should().Be(game.GameContext.BoardSize.Value);
+            });
+        }
+
+        [Fact]
+        public async Task ShouldReturnGameStateWhenNoGameIsActive()
+        {
+            var gameQuery = new GetCurrentGameQuery();
+
+            await InScope(async testContext =>
+            {
+                var result = await testContext.Mediator.Send(gameQuery, CancellationToken.None);
+
+                result.IsGameActive.Should().BeFalse();
             });
         }
     }

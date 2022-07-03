@@ -16,7 +16,7 @@ namespace Bc.Battleships.Tests.Integration.Database.Ships
 
             player.IncomingShot(new Coordinates(1, 1));
 
-            AssertDomainEventWasPublished<AbandonTheShipDomainEvent>(x => x.Ship == ship);
+            AssertEventWasPublished<AbandonTheShipDomainEvent>(x => x.Ship == ship);
         }
 
 
@@ -27,7 +27,7 @@ namespace Bc.Battleships.Tests.Integration.Database.Ships
 
             player.IncomingShot(new Coordinates(1, 1));
 
-            AssertDomainEventWasNotPublished<AbandonTheShipDomainEvent>();
+            AssertEventWasNotPublished<AbandonTheShipDomainEvent>();
         }
 
         private static (Ship ship, ComputerPlayer player) AssumePlayerWithOneSmallShipIsCreated(int hitPoints)

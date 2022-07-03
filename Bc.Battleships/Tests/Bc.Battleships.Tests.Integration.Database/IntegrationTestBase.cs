@@ -15,7 +15,7 @@ namespace Bc.Battleships.Tests.Integration.Database
     public class IntegrationTestBase : IDisposable
     {
         protected IServiceProvider ServiceProvider { get; }
-        private IBus _busSubstitute { get; }
+        private readonly IBus _busSubstitute;
 
         public IntegrationTestBase()
         {
@@ -47,35 +47,34 @@ namespace Bc.Battleships.Tests.Integration.Database
 
         public async Task InScope(Func<BattleshipsDbContext, Task> action)
         {
-            using (var scope = ServiceProvider.CreateAsyncScope())
-            {
-                var dbContext = scope.ServiceProvider.GetService<BattleshipsDbContext>();
-                
-                await action(dbContext!);
-            }
+            using var scope = ServiceProvider.CreateAsyncScope();
+            var dbContext = scope.ServiceProvider.GetService<BattleshipsDbContext>();
+
+            await action(dbContext!);
         }
 
         public void InScope(Action<BattleshipsDbContext> action)
         {
-            using (var scope = ServiceProvider.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetService<BattleshipsDbContext>();
+            using var scope = ServiceProvider.CreateScope();
+            var dbContext = scope.ServiceProvider.GetService<BattleshipsDbContext>();
 
-                action(dbContext!);
-            }
+            action(dbContext!);
         }
 
-        public void AssertDomainEventWasPublished<T>(Expression<Predicate<T>> assertExpression) where T:IDomainEvent
+        public void AssertEventWasPublished<T>(Expression<Predicate<T>> assertExpression) where T:IEvent
         {
             _busSubstitute.Received().Publish(Arg.Is<T>(assertExpression));
         }
 
-        public void AssertDomainEventWasNotPublished<T>() where T : IDomainEvent
+        public void AssertEventWasNotPublished<T>() where T : IEvent
         {
             _busSubstitute.Received().Publish(Arg.Any<T>());
         }
 
         public void Dispose()
-            => InScope(dbc => dbc.Database.EnsureDeleted());
+        {
+            InScope(dbc => dbc.Database.EnsureDeleted());
+            GC.SuppressFinalize(this);
+        }
     }
 }

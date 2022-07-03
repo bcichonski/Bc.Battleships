@@ -27,5 +27,9 @@ namespace Bc.Battleships.Controllers
         [HttpPut]
         public async Task<ShootResult> Shoot(ShootCommand shootCommand)
             => await _mediator.Send(shootCommand);
+
+        [HttpPost]
+        public async Task CreateNewGame()
+            => await _mediator.Send(new CreateNewGameCommand());
     }
 }

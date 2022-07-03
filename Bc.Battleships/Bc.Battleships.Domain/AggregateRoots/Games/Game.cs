@@ -13,9 +13,9 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games
         public HumanPlayer HumanPlayer { get; } = new HumanPlayer();
         public GameContext GameContext { get; } = GameContextProvider.GameContext;
 
-        public GameState GameState { get; }
+        public GameState GameState { get; private set; }
 
-        public Game(GameId id, ComputerPlayer computerPlayer)
+        internal Game(GameId id, ComputerPlayer? computerPlayer)
         {
             Id = id;
 
@@ -37,5 +37,21 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games
 
         public ShootResult Shoot(Coordinates coordinates)
             => ComputerPlayer.IncomingShot(coordinates);
+
+        public void Stop()
+        {
+            GameState = GameState.Ended;
+        }
+
+        public static Game CreateNewGame()
+        {
+            var computerPlayer = new ComputerPlayer();
+            var newGame = new Game(new GameId(), computerPlayer);
+            computerPlayer.SetOwner(newGame);
+
+            newGame.PositionFleets();
+
+            return newGame;
+        }
     }
 }

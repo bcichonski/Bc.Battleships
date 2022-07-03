@@ -56,7 +56,7 @@ namespace Bc.Battleships.Tests.Common.Builders
             return computerPlayer;
         }
 
-        private void ShootAll(ComputerPlayer computerPlayer, ISet<Coordinates> coordinatesShot)
+        private static void ShootAll(ComputerPlayer computerPlayer, ISet<Coordinates> coordinatesShot)
         {
             foreach (var coordinates in coordinatesShot)
             {

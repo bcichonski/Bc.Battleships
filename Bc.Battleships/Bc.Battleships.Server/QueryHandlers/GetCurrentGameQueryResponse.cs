@@ -8,7 +8,7 @@ namespace Bc.Battleships.Server.QueryHandlers
 {
     public class GetCurrentGameQueryHandler : IRequestHandler<GetCurrentGameQuery, GameDto>
     {
-        IGamesRepository _gamesRepository;
+        private readonly IGamesRepository _gamesRepository;
 
         public GetCurrentGameQueryHandler(IGamesRepository gamesRepository)
         {

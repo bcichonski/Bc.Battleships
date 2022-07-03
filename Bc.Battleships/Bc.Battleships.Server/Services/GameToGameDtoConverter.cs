@@ -11,10 +11,10 @@ namespace Bc.Battleships.Server.Services
     internal static class GameToGameDtoConverter
     {
         public static GameDto Convert(Game? game)
-            => new GameDto(ConvertBoard(game), game!.ComputerPlayer.CurrentHitPoints.Value);
+            => new(ConvertBoard(game), game!.ComputerPlayer.CurrentHitPoints.Value);
 
         private static BoardDto ConvertBoard(Game? game)
-            => new BoardDto(GetBoardState(game!.GameContext.BoardSize.Value, game.ComputerPlayer));
+            => new(GetBoardState(game!.GameContext.BoardSize.Value, game.ComputerPlayer));
 
         private static BoardFieldState[,] GetBoardState(int boardSize, ComputerPlayer computerPlayer)
         {

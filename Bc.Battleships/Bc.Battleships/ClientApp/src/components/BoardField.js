@@ -1,15 +1,17 @@
-import React, { Fragment } from 'react';
+import React from 'react';
+import { shotAt } from '../backend';
+import { Button } from 'reactstrap';
+import { FIELDSTATEMAP } from '../constants';
 
-const fieldStateMap = {
-    0 : '▢',
-    1 : '○',
-    2 : '●'
-}
+import '../custom.css'
 
 const BoardField = props => {
-    const key = props.rowNumber+'|'+props.columnNumber
+    const key = '' + props.rowNumber + '|' + props.columnNumber
+    const onClick = () => {
+        shotAt(props.columnNumber + 1, props.rowNumber + 1, props.onShot)
+    }
 
-    return <span key={key}>{fieldStateMap[props.state]}</span>
+    return <Button key={key} onClick={onClick} className="board-field">{FIELDSTATEMAP[props.state]}</Button>
 }
 
 export default BoardField;

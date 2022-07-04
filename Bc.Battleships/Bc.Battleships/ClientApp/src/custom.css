@@ -15,5 +15,14 @@ code {
 
 .board-row {
     white-space: nowrap;
-    font-size: 1em;
+}
+
+.board-field {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.5rem;
+}
+
+.center {
+    max-width: min-content;
 }

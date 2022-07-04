@@ -1,12 +1,12 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import BoardField from './BoardField'
 
 const BoardRow = props => {
-    var columns = props.row.map((x, idx) => (<BoardField state={x} rowNumber={props.rowNumber} columnNumber={idx}></BoardField>))
+    var columns = props.row.map((x, idx) => (<BoardField key={(''+props.rowNumber+idx)} state={x} rowNumber={props.rowNumber} columnNumber={idx} onShot={props.onShot}></BoardField>))
     return (
-        <Fragment key={props.rowNumber} className="board-row">
+        <div key={props.rowNumber} className="board-row">
             {columns}
-        </Fragment>
+        </div>
     )
 }
 

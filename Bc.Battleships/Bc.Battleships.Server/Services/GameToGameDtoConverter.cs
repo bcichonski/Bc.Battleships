@@ -22,15 +22,35 @@ namespace Bc.Battleships.Server.Services
 
             var boardShoot = new HashSet<Coordinates>(computerPlayer.CoordinatesShoot.Select(x => x.Coordinates));
 
+            BoardRowDto[] boardRows = CreateBoard(boardSize);
+            PutShots(boardShoot, boardRows);
+            PlaceShips(computerPlayer, boardShoot, boardRows);
+
+            return boardRows;
+        }
+
+        private static void PlaceShips(ComputerPlayer computerPlayer, HashSet<Coordinates> boardShoot, BoardRowDto[] boardRows)
+        {
+            foreach (var ship in computerPlayer.Ships!)
+            {
+                Place(ship, boardRows, boardShoot);
+            }
+        }
+
+        private static void PutShots(HashSet<Coordinates> boardShoot, BoardRowDto[] boardRows)
+        {
+            foreach (var shot in boardShoot)
+            {
+                boardRows[shot.Row].Row[shot.Column] = BoardFieldState.Miss;
+            }
+        }
+
+        private static BoardRowDto[] CreateBoard(int boardSize)
+        {
             var boardRows = new BoardRowDto[boardSize];
             for (int row = 0; row < boardSize; row++)
             {
                 boardRows[row] = new BoardRowDto(new BoardFieldState[boardSize]);
-            }
-
-            foreach (var ship in computerPlayer.Ships!)
-            {
-                Place(ship, boardRows, boardShoot);
             }
 
             return boardRows;

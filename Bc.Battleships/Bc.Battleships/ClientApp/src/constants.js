@@ -1,7 +1,7 @@
 const BOARDFIELD = {
     UNKNOWN: 0,
-    HIT: 1,
-    MISS: 2
+    HIT: 2,
+    MISS: 1
 }
 
 let FIELDSTATEMAP = { }

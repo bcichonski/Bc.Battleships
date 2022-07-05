@@ -8,10 +8,15 @@ import '../custom.css'
 const BoardField = props => {
     const key = '' + props.rowNumber + '|' + props.columnNumber
     const onClick = () => {
-        shotAt(props.columnNumber + 1, props.rowNumber + 1, props.onShot)
+        shotAt(props.columnNumber, props.rowNumber, props.onShot)
     }
 
-    return <Button key={key} onClick={onClick} className="board-field">{FIELDSTATEMAP[props.state]}</Button>
+    return (
+        <td>
+            <Button key={key} onClick={onClick} className="board-field">{FIELDSTATEMAP[props.state]}
+            </Button>
+        </td>
+    )
 }
 
 export default BoardField;

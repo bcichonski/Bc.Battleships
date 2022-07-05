@@ -7,10 +7,17 @@ const Board = props => {
         </BoardRow>
     ))
 
+    const header = [<th className='board-field board-header'></th>, ...props.rows[0].row.map((_, idx) => (<th className='board-field board-header'>{idx}</th>)) ]
+
     return (
-        <div className="board">
-            {rowElements}
-        </div>
+        <table className="board">
+            <thead>
+                {header}
+            </thead>
+            <tbody>
+                {rowElements}
+            </tbody>
+        </table>
     )
 }
 

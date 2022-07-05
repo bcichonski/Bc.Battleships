@@ -1,9 +1,13 @@
 import cloneDeep from 'lodash/cloneDeep';
-import { BOARDFIELD } from './constants';
+import { ALPHABET, BOARDFIELD } from './constants';
+
+const throwIt = (err) => {
+    throw err;
+}
 
 const handleShot = (result, state) => {
     if (result.state === 'error') {
-        console.error(result.error)
+        throwIt(result.error)
         return
     }
 
@@ -16,4 +20,6 @@ const handleShot = (result, state) => {
     return newState 
 }
 
-export { handleShot }
+const convertNumberToLetter = (number) => number < ALPHABET.length ? ALPHABET.at(number) : throwIt(new Error('Alphabet is to small'))
+
+export { handleShot, convertNumberToLetter }

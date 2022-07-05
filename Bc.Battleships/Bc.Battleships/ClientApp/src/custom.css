@@ -13,6 +13,9 @@ code {
     border-color: #1861ac;
 }
 
+.board {
+}
+
 .board-row {
     white-space: nowrap;
 }
@@ -21,6 +24,17 @@ code {
     width: 3rem;
     height: 3rem;
     font-size: 1.5rem;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.board-header {
+    min-width: 3rem;
+    min-height: 3rem;
+    max-width: 3rem;
+    max-height: 3rem;
+    vertical-align: middle;
+    text-align: center;
 }
 
 .center {

@@ -1,4 +1,6 @@
-﻿using Bc.Battleships.Messages.Commands;
+﻿using Bc.Battleships.Domain.Events;
+using Bc.Battleships.Messages;
+using Bc.Battleships.Messages.Commands;
 using Bc.Battleships.Messages.CommandsResults;
 using Bc.Battleships.Messages.DTOs;
 using Bc.Battleships.Messages.Queries;
@@ -13,11 +15,15 @@ namespace Bc.Battleships.Controllers
     {
         private readonly ILogger<GameController> _logger;
         private readonly IMediator _mediator;
+        private readonly IBus _bus;
 
-        public GameController(ILogger<GameController> logger, IMediator mediator)
+        public GameController(ILogger<GameController> logger, IMediator mediator, IBus bus)
         {
             _logger = logger;
             _mediator = mediator;
+            _bus = bus;
+
+            DomainEventBus.GetBus = () => _bus;
         }
 
         [HttpGet]

@@ -4,10 +4,12 @@ namespace Bc.Battleships.Domain.Events
 {
     public class DomainEventBus : IDomainEventBus
     {
-        private static IBus? _bus;
-        public static IDomainEventBus Instance { get; } = new DomainEventBus();
+        public static Func<IBus>? GetBus { get; set; }
+        public static DomainEventBus Instance => new(GetBus!());
 
-        public static void Use(IBus bus)
+        private readonly IBus? _bus;
+       
+        public DomainEventBus(IBus bus)
         {
             _bus = bus;
         }

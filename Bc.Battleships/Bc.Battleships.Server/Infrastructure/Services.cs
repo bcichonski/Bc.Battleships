@@ -11,7 +11,7 @@ namespace Bc.Battleships.Server.Infrastructure
         {
             serviceCollection.AddMediatR(typeof(Services).Assembly, typeof(IDomainEvent).Assembly);
 
-            serviceCollection.AddSingleton<IBus, Bus>();
+            serviceCollection.AddScoped<IBus, Bus>();
         }
     }
 }

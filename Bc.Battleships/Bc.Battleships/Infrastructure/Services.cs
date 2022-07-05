@@ -28,8 +28,6 @@ namespace Bc.Battleships.Infrastructure
 
         public static async Task InitializeAsync(IServiceProvider serviceProvider)
         {
-            DomainEventBus.Use(serviceProvider.GetRequiredService<IBus>());
-
             using (var scope = serviceProvider.CreateAsyncScope())
             {
                 await scope.ServiceProvider.GetRequiredService<DatabaseMigrator>().ApplyMigrationsIfNeeded();

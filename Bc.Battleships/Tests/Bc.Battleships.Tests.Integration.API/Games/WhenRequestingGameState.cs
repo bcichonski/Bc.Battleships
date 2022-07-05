@@ -20,7 +20,7 @@ namespace Bc.Battleships.Tests.Integration.API.Games
 
                 result.IsGameActive.Should().BeTrue();
                 result.CurrentHitPoints.Should().BeGreaterThan(0);
-                result.Board.BoardSize.Should().Be(game.GameContext.BoardSize.Value);
+                result!.Board!.BoardSize.Should().Be(game.GameContext.BoardSize.Value);
             });
         }
 

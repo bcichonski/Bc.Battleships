@@ -13,6 +13,19 @@ async function fetchGameData(setState) {
     }
 }
 
+async function newGame(history) {
+    try {
+        await fetch('/game',{
+            method: 'POST',
+            body: ''
+        })
+
+        history.go(0)
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 async function shotAt(column, row, process) {
     try {
         const result = await (await fetch("/game", {
@@ -41,4 +54,4 @@ async function shotAt(column, row, process) {
     }
 }
 
-export { fetchGameData, shotAt }
+export { fetchGameData, shotAt, newGame }

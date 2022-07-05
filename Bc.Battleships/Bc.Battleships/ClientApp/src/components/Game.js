@@ -3,11 +3,14 @@ import { Container, Row } from 'reactstrap';
 import CurrentHitPoints from './CurrentHitPoints';
 import Board from './Board'
 import { handleShot } from '../logic/logic';
-import { fetchGameData } from '../logic/backend';
+import { fetchGameData, newGame } from '../logic/backend';
+import { useHistory } from 'react-router-dom';
 
 import '../custom.css'
 
 const Game = () => {
+    const history = useHistory()
+
     const [state, setState] = useState({
         state: 'loading'
     })
@@ -25,14 +28,15 @@ const Game = () => {
                 <Container className="center">
                     <Row><CurrentHitPoints hp={state.data.currentHitPoints}></CurrentHitPoints></Row>
                     <Row><Board rows={state.data.board.boardRows} onShot={onShot}></Board></Row>
-                    <Row><pre>{JSON.stringify(state.data, null, 2)}</pre></Row>
                 </Container>
             )
         }
 
+        newGame(history);
+
         return (
             <div>
-                CreateNewGame
+                Creating a new game...
             </div>
         )
     }

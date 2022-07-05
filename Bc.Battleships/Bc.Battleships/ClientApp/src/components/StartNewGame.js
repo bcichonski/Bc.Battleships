@@ -1,17 +1,12 @@
 import { Button } from 'reactstrap';
 import React from 'react';
+import { useHistory } from 'react-router'
+import { newGame } from '../logic/backend';
 
 const StartNewGame = (props) => {
-    const onClickFn = () => {
-        async function NewGame() {
-            await fetch('/game',{
-                method: 'POST',
-                body: ''
-            })
-        }
+    const history = useHistory()
 
-        NewGame()
-    }
+    const onClickFn = () => newGame(history)
 
     return (
         <Button onClick={onClickFn}>Start new game</Button>

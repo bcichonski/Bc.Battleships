@@ -15,20 +15,22 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games
 
         public GameState GameState { get; private set; }
 
+#pragma warning disable CS8601 // Possible null reference assignment.
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         internal Game(GameId id, ComputerPlayer? computerPlayer)
         {
             Id = id;
 
             ComputerPlayer = computerPlayer;
-
             GameState = GameState.Active;
         }
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         private Game()
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
         {
         }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning restore CS8601 // Possible null reference assignment.
 
         public void PositionFleets()
         {

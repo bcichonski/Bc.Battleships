@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Row } from 'reactstrap';
+import React, { useEffect, useState, Fragment } from 'react';
+import { Row } from 'reactstrap';
 import CurrentHitPoints from './CurrentHitPoints';
 import Board from './Board'
 import { handleShot } from '../logic/logic';
@@ -7,6 +7,31 @@ import { fetchGameData, newGame } from '../logic/backend';
 import { useHistory } from 'react-router-dom';
 
 import '../custom.css'
+
+const winMessage = (
+    <div className="big-message">
+        You win!
+    </div>
+)
+
+const creatingMessage = (
+    <div>
+        Creating a new game...
+    </div>
+)
+
+const activeGame = (state, onShot) => (
+    <div>
+        <Row><CurrentHitPoints hp={state.data.currentHitPoints}></CurrentHitPoints></Row>
+        <Row><Board rows={state.data.board.boardRows} onShot={onShot}></Board></Row>
+    </div>
+)
+
+const errorMessage = state => (
+    <div>
+        {JSON.stringify(state.error)}
+    </div>
+)
 
 const Game = () => {
     const history = useHistory()
@@ -21,43 +46,25 @@ const Game = () => {
         fetchGameData(setState)
     }, [])
 
-    if (state.state === 'ok') {
-
-        if (state.data.currentHitPoints <= 0) {
-            return (
-                <Container className="center big-message">
-                    You win!
-                </Container>
-            )
-        }
-
-        if (state.data.isGameActive) {
-            return (
-                <Container className="center">
-                    <Row><CurrentHitPoints hp={state.data.currentHitPoints}></CurrentHitPoints></Row>
-                    <Row><Board rows={state.data.board.boardRows} onShot={onShot}></Board></Row>
-                </Container>
-            )
-        }
-
-        newGame(history);
-
-        return (
-            <div>
-                Creating a new game...
-            </div>
-        )
+    if (state.state === 'loading') {
+        return (<div>Loading...</div>)
     }
 
     if (state.state === 'error') {
-        return (
-            <div>
-                {JSON.stringify(state.error)}
-            </div>
-        )
+        return errorMessage(state)
     }
 
-    return (<div>Loading...</div>)
+    if (state.data.currentHitPoints <= 0) {
+        return winMessage
+    }
+
+    if (state.data.isGameActive) {
+        return activeGame(state, onShot)
+    }
+
+    newGame(history);
+
+    return creatingMessage
 }
 
 export default Game;

@@ -1,6 +1,4 @@
-﻿using Bc.Battleships.Domain.Events;
-using Bc.Battleships.Messages;
-using Bc.Battleships.Messages.Commands;
+﻿using Bc.Battleships.Messages.Commands;
 using Bc.Battleships.Messages.CommandsResults;
 using Bc.Battleships.Messages.DTOs;
 using Bc.Battleships.Messages.Queries;

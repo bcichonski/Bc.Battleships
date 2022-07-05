@@ -1,7 +1,7 @@
 import React from 'react';
 
 const CurrentHitPoints = props => {
-    return <span>Hit points: {props.hp}</span>
+    return <span>Left to hit: {props.hp}</span>
 }
 
 export default CurrentHitPoints;

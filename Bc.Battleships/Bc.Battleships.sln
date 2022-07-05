@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bc.Battleships.Tests.Integr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bc.Battleships.EFMigrationsHelper", "Bc.Battleships.EFMigrationsHelper\Bc.Battleships.EFMigrationsHelper.csproj", "{BECE3BB6-03D8-451E-B158-800B486A3C19}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bc.Battleships.Tests.Integration.API", "Tests\Bc.Battleships.Tests.Integration.API\Bc.Battleships.Tests.Integration.API.csproj", "{556877E0-9F2D-425D-9655-FC1C40296332}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bc.Battleships.Tests.Integration.API", "Tests\Bc.Battleships.Tests.Integration.API\Bc.Battleships.Tests.Integration.API.csproj", "{556877E0-9F2D-425D-9655-FC1C40296332}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

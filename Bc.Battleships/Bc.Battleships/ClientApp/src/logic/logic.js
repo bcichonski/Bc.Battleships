@@ -15,7 +15,7 @@ const handleShot = (result, state) => {
 
     newState.data.currentHitPoints = result.data.currentHitPoints
 
-    newState.data.board.boardRows[result.row-1].row[result.column-1] = result.data.hit ? BOARDFIELD.HIT : BOARDFIELD.MISS
+    newState.data.board.boardRows[result.row].row[result.column] = result.data.hit ? BOARDFIELD.HIT : BOARDFIELD.MISS
     
     return newState 
 }

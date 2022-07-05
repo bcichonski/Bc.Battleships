@@ -16,14 +16,22 @@ const Game = () => {
     })
 
     const onShot = (result) => setState(handleShot(result, state))
-    
+
     useEffect(() => {
         fetchGameData(setState)
     }, [])
 
     if (state.state === 'ok') {
 
-        if(state.data.isGameActive) {
+        if (state.data.currentHitPoints <= 0) {
+            return (
+                <Container className="center big-message">
+                    You win!
+                </Container>
+            )
+        }
+
+        if (state.data.isGameActive) {
             return (
                 <Container className="center">
                     <Row><CurrentHitPoints hp={state.data.currentHitPoints}></CurrentHitPoints></Row>

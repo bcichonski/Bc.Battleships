@@ -40,3 +40,8 @@ code {
 .center {
     max-width: min-content;
 }
+
+.big-message {
+    font-size: xx-large;
+    text-align: center;
+}

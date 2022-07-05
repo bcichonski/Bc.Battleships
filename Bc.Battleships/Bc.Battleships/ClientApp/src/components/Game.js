@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Container, Row } from 'reactstrap';
 import CurrentHitPoints from './CurrentHitPoints';
 import Board from './Board'
-import { handleShot } from '../logic';
-import { fetchGameData } from '../backend';
+import { handleShot } from '../logic/logic';
+import { fetchGameData } from '../logic/backend';
 
 import '../custom.css'
 

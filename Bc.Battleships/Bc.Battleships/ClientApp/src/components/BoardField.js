@@ -1,7 +1,7 @@
 import React from 'react';
-import { shotAt } from '../backend';
+import { shotAt } from '../logic/backend';
 import { Button } from 'reactstrap';
-import { FIELDSTATEMAP } from '../constants';
+import { FIELDSTATEMAP } from '../logic/constants';
 
 import '../custom.css'
 

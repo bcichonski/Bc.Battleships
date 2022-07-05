@@ -41,7 +41,7 @@ namespace Bc.Battleships.Server.Services
         {
             foreach (var shot in boardShoot)
             {
-                boardRows[shot.Row].Row[shot.Column] = BoardFieldState.Miss;
+                boardRows[shot.Row - 1].Row[shot.Column - 1] = BoardFieldState.Miss;
             }
         }
 
@@ -71,7 +71,7 @@ namespace Bc.Battleships.Server.Services
         {
             for (int i = 0; i < ship.Length.Value; i++)
             {
-                boardRows[ship.Coordinates.Row + i].Row[ship.Coordinates.Column] = ToBoardState(ship.Compartments[i], boardShoot);
+                boardRows[ship.Coordinates.Row + i - 1].Row[ship.Coordinates.Column - 1] = ToBoardState(ship.Compartments[i], boardShoot);
             }
         }
 
@@ -79,7 +79,7 @@ namespace Bc.Battleships.Server.Services
         {
             for (int i = 0; i < ship.Length.Value; i++)
             {
-                boardRows[ship.Coordinates.Row].Row[ship.Coordinates.Column + i] = ToBoardState(ship.Compartments[i], boardShoot);
+                boardRows[ship.Coordinates.Row - 1].Row[ship.Coordinates.Column + i - 1] = ToBoardState(ship.Compartments[i], boardShoot);
             }
         }
 

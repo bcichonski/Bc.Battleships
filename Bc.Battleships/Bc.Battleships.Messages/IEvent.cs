@@ -1,6 +1,8 @@
-﻿namespace Bc.Battleships.Messages
+﻿using MediatR;
+
+namespace Bc.Battleships.Messages
 {
-    public interface IEvent
+    public interface IEvent : INotification
     {
     }
 }

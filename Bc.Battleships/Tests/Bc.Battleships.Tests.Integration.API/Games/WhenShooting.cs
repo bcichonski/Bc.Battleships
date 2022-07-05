@@ -18,8 +18,7 @@ namespace Bc.Battleships.Tests.Integration.API.Games
         {
             var game = await AssumeGameInDb();
             var currentHitPoints = game.ComputerPlayer.CurrentHitPoints.Value;
-            var expectedCoordinates = new Coordinates(2, 1);
-            var shootCommand = new ShootCommand(expectedCoordinates.Column, expectedCoordinates.Row);
+            var shootCommand = new ShootCommand(1, 0);
 
             await InScope(async testContext =>
             {

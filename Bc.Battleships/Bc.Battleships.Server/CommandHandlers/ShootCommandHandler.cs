@@ -23,7 +23,7 @@ namespace Bc.Battleships.Server.CommandHandlers
         {
             var game = await _gamesRepository.Get(cancellationToken);
 
-            var result = game!.Shoot(new Coordinates(request.Column, request.Row));
+            var result = game!.Shoot(new Coordinates(request.Column + 1, request.Row + 1));
 
             await _battleshipsDbContext.SaveChangesAsync();
 

@@ -6,16 +6,16 @@ namespace Bc.Battleships.Domain.ValueObjects
     {
         public override string ToString()
         {
-            return $"{NumberToLettersConverter.Convert(Column)}{Row}";
+            return $"{NumberToLettersConverter.Convert(Row)}{Column}";
         }
 
         public static Coordinates Parse(string value)
         {
-            var columnString = value.Substring(0, 1);
-            var rowString = value.Substring(1);
+            var columnString = value.Substring(1);
+            var rowString = value.Substring(0, 1);
 
-            var column = NumberToLettersConverter.Convert(columnString);
-            var row = int.Parse(rowString);
+            var column = int.Parse(columnString);
+            var row = NumberToLettersConverter.Convert(rowString);
 
             return new Coordinates(column, row);
         }

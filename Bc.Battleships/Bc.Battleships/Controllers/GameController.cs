@@ -15,15 +15,11 @@ namespace Bc.Battleships.Controllers
     {
         private readonly ILogger<GameController> _logger;
         private readonly IMediator _mediator;
-        private readonly IBus _bus;
 
-        public GameController(ILogger<GameController> logger, IMediator mediator, IBus bus)
+        public GameController(ILogger<GameController> logger, IMediator mediator)
         {
             _logger = logger;
             _mediator = mediator;
-            _bus = bus;
-
-            DomainEventBus.GetBus = () => _bus;
         }
 
         [HttpGet]

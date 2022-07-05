@@ -10,6 +10,8 @@ namespace Bc.Battleships.Server.CommandHandlers
 {
     internal class ShootCommandHandler : IRequestHandler<ShootCommand, ShootResult>
     {
+        private const int GAME_ENDED = -1;
+
         private readonly IGamesRepository _gamesRepository;
         private readonly BattleshipsDbContext _battleshipsDbContext;
 
@@ -22,6 +24,11 @@ namespace Bc.Battleships.Server.CommandHandlers
         public async Task<ShootResult> Handle(ShootCommand request, CancellationToken cancellationToken)
         {
             var game = await _gamesRepository.Get(cancellationToken);
+
+            if (game == null)
+            {
+                return new ShootResult(false, GAME_ENDED);
+            }
 
             var result = game!.Shoot(new Coordinates(request.Column + 1, request.Row + 1));
 

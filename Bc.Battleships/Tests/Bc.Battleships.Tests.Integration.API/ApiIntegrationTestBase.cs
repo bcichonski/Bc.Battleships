@@ -28,7 +28,7 @@ namespace Bc.Battleships.Tests.Integration.API
             _serviceProvider = services.BuildServiceProvider();
 
             _busSubstitute = Substitute.For<IBus>();
-            DomainEventBus.GetBus = () => _busSubstitute;
+            DomainEventBus.Use(_busSubstitute);
 
             InitializeDatabase().Wait();
         }

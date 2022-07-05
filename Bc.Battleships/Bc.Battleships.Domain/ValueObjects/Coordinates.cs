@@ -11,8 +11,8 @@ namespace Bc.Battleships.Domain.ValueObjects
 
         public static Coordinates Parse(string value)
         {
-            var columnString = value.Substring(1);
-            var rowString = value.Substring(0, 1);
+            var columnString = value[1..];
+            var rowString = value[..1];
 
             var column = int.Parse(columnString);
             var row = NumberToLettersConverter.Convert(rowString);

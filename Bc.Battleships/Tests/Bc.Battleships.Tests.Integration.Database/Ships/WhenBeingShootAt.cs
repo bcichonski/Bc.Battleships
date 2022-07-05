@@ -16,7 +16,7 @@ namespace Bc.Battleships.Tests.Integration.Database.Ships
 
             player.IncomingShot(new Coordinates(1, 1));
 
-            AssertEventWasPublished<AbandonTheShipDomainEvent>(x => x.Ship == ship);
+            AssertEventWasPublished<AbandonTheShipDomainEvent>(x => x.GameId == player!.Game!.Id);
         }
 
 
@@ -38,6 +38,10 @@ namespace Bc.Battleships.Tests.Integration.Database.Ships
                                     .Build();
             var player = new ComputerPlayerBuilder()
                 .WithFleet(new[] { ship })
+                .Build();
+
+            new GameBuilder()
+                .WithComputerPlayer(player)
                 .Build();
 
             return (ship, player);

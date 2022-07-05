@@ -18,7 +18,7 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Ships
         public Length Length { get; }
         public IList<ShipCompartment> Compartments { get; }
 
-        public HitPoints CurrentHitPoints => new HitPoints(Compartments.Where(x => x.State == ShipCompartmentState.Dry).Count());
+        public HitPoints CurrentHitPoints => new(Compartments.Where(x => x.State == ShipCompartmentState.Dry).Count());
 
         public Ship(Coordinates coordinates, ShipLayout layout, Length length)
         {
@@ -70,7 +70,7 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Ships
         {
             if (CurrentHitPoints.Value <= 0)
             {
-                DomainEventBus.Instance.Publish(new AbandonTheShipDomainEvent(this));
+                DomainEventBus.Instance.Publish(new AbandonTheShipDomainEvent(this.Owner?.Game?.Id));
             }
         }
     }

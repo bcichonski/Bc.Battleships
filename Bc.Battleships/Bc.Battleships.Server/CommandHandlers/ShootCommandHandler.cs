@@ -25,7 +25,7 @@ namespace Bc.Battleships.Server.CommandHandlers
 
             var result = game!.Shoot(new Coordinates(request.Column + 1, request.Row + 1));
 
-            await _battleshipsDbContext.SaveChangesAsync();
+            await _battleshipsDbContext.SaveChangesAsync(cancellationToken);
 
             return new ShootResult(result == ShootResultEnum.Hit, game.ComputerPlayer.CurrentHitPoints.Value);
         }

@@ -1,14 +1,15 @@
-﻿using Bc.Battleships.Domain.AggregateRoots.Games.Ships;
+﻿using Bc.Battleships.Domain.AggregateRoots.Games;
+using Bc.Battleships.Domain.ValueObjects;
 
 namespace Bc.Battleships.Domain.Events.Ships
 {
     public class AbandonTheShipDomainEvent : IDomainEvent
     {
-        public Ship Ship { get; }
+        public GameId? GameId { get; }
 
-        public AbandonTheShipDomainEvent(Ship ship)
+        public AbandonTheShipDomainEvent(GameId? gameId)
         {
-            Ship = ship;
+            GameId = gameId;
         }
     }
 }

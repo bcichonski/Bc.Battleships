@@ -6,7 +6,7 @@
 
   <ItemGroup Label="Production">
     <PackageVersion Include="Ensure.That" Version="10.1.0" />
-    <PackageVersion Include="MediatR" Version="10.0.1" />
+    <PackageVersion Include="MediatR" Version="14.2.0" />
     <PackageVersion Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageVersion Include="Microsoft.AspNetCore.SpaProxy" Version="6.0.4" />

@@ -1,3 +1,5 @@
+using Scalar.AspNetCore;
+
 namespace Bc.Battleships.Infrastructure
 {
     public static class App
@@ -19,23 +21,13 @@ namespace Bc.Battleships.Infrastructure
 
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
+                app.MapOpenApi();
+                app.MapScalarApiReference();
             }
 
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller}/{action=Index}/{id?}");
+            app.MapGameEndpoints();
 
             app.MapFallbackToFile("index.html");
-
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwaggerUI(options =>
-                {
-                    options.SwaggerEndpoint("/swagger", "v1");
-                    options.RoutePrefix = "";
-                });
-            }
         }
     }
 }

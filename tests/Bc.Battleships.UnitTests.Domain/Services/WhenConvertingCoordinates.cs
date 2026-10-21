@@ -1,4 +1,4 @@
-using FluentAssertions;
+using AwesomeAssertions;
 using Bc.Battleships.Domain.ValueObjects;
 using Xunit;
 

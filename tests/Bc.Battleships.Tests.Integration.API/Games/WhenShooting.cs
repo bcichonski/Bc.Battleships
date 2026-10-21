@@ -1,9 +1,9 @@
-using FluentAssertions;
+using AwesomeAssertions;
 using Bc.Battleships.Domain.AggregateRoots.Games;
 using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Messages.Commands;
 using Bc.Battleships.Tests.Common.Builders;
-using MediatR;
+using Mediator;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading;
 using System.Threading.Tasks;

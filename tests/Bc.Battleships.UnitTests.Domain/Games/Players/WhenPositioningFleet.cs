@@ -1,4 +1,4 @@
-using FluentAssertions;
+using AwesomeAssertions;
 using Bc.Battleships.Domain.Services;
 using Bc.Battleships.Tests.Common.Builders;
 using Xunit;

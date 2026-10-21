@@ -1,5 +1,3 @@
-using EnsureThat;
-
 namespace Bc.Battleships.Messages.DTOs
 {
     [Serializable]
@@ -10,7 +8,10 @@ namespace Bc.Battleships.Messages.DTOs
 
         public BoardDto(int boardSize, BoardRowDto[] boardRows)
         {
-            Ensure.That(boardRows.Length).Is(boardSize);
+            if (boardRows.Length != boardSize)
+            {
+                throw new ArgumentException($"Board must have exactly {boardSize} rows.", nameof(boardRows));
+            }
 
             BoardSize = boardSize;
             BoardRows = boardRows;

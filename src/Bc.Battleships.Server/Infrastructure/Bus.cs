@@ -1,5 +1,5 @@
 using Bc.Battleships.Messages;
-using MediatR;
+using Mediator;
 
 namespace Bc.Battleships.Server.Infrastructure
 {

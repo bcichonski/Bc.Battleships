@@ -1,4 +1,3 @@
-using EnsureThat;
 using Bc.Battleships.Domain.ValueObjects.Exceptions;
 
 namespace Bc.Battleships.Domain.ValueObjects
@@ -9,7 +8,10 @@ namespace Bc.Battleships.Domain.ValueObjects
 
         public Length(int value)
         {
-            Ensure.That(value >= 0, optsFn: x => x.WithException(new NegativeLengthValueException()));
+            if (value < 0)
+            {
+                throw new NegativeLengthValueException();
+            }
 
             Value = value;
         }

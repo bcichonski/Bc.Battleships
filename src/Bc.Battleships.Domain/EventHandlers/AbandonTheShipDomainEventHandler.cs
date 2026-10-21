@@ -1,6 +1,6 @@
 using Bc.Battleships.Domain.Events.Ships;
 using Bc.Battleships.Domain.Repositories;
-using MediatR;
+using Mediator;
 
 namespace Bc.Battleships.Domain.EventHandlers
 {
@@ -13,7 +13,7 @@ namespace Bc.Battleships.Domain.EventHandlers
             _gamesRepository = gamesRepository;
         }
 
-        public async Task Handle(AbandonTheShipDomainEvent notification, CancellationToken cancellationToken)
+        public async ValueTask Handle(AbandonTheShipDomainEvent notification, CancellationToken cancellationToken)
         {
             if(notification.GameId == null)
             {

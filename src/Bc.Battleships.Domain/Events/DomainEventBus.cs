@@ -1,20 +1,20 @@
 using Bc.Battleships.Messages;
-using Microsoft.AspNetCore.Http;
 
 namespace Bc.Battleships.Domain.Events
 {
     public class DomainEventBus : IDomainEventBus
     {
-        private static IHttpContextAccessor? _httpContextAccessor;
+        private static Func<IBus?>? _currentBusResolver;
         private static IDomainEventBus? _domainEventBus;
         
-        public static IDomainEventBus Instance => _domainEventBus ?? new DomainEventBus((IBus) _httpContextAccessor!.HttpContext.RequestServices.GetService(typeof(IBus))!);
+        public static IDomainEventBus Instance => _domainEventBus ?? new DomainEventBus(_currentBusResolver!()!);
 
         private readonly IBus? _bus;
 
-        public static void SetHttpContextAccessor(IHttpContextAccessor accessor)
+        /// <summary>Supplies how to resolve the <see cref="IBus"/> of the current request scope (set by the host at startup).</summary>
+        public static void SetCurrentBusResolver(Func<IBus?> resolver)
         {
-            _httpContextAccessor = accessor;
+            _currentBusResolver = resolver;
         }
 
         internal static void Use(IBus bus)

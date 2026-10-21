@@ -1,0 +1,10 @@
+# Progress — 2 Modernization Phase 2: Platform Upgrade to .NET 10
+
+| Task | Title | Depends on | Complexity | Status | Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| T1 | Retarget to net10.0 and upgrade EF Core to 10 | — | Medium | Done | sonnet; started 10:52Z; finished 10:55Z; D3 case (a) no pending model changes; M.E.DI 10.0.13 (NU1605); Test.Sdk bumped early to 18.11.0 (NU1903 via old testhost); 40 tests; verify PASS 40/40 |
+| T2 | Test stack: xunit v3, AwesomeAssertions, current Test.Sdk / NSubstitute / coverlet | T1 | Medium | Done | sonnet; started 10:55Z; finished 10:58Z; xunit.v3.mtp-off 4.0.2 (plain xunit.v3 pulls MTP, breaks VSTest on SDK 10); CollectionPerAssembly replaces obsolete DisableTestParallelization; coverage files OK; verify PASS 40/40 |
+| T3 | MediatR 10 → Mediator 3 (source-generated) | T2 | High | Done | opus; started 10:58Z; finished 11:01Z; AddMediator Scoped with Assemblies=[Server,Domain,Messages]; cross-assembly handler test WhenAbandoningTheShip; 41 tests; verify PASS 41/41 |
+| T4 | Ensure.That → BCL guards; remove Http.Abstractions from Domain | T3 | Medium | Done | sonnet; started 11:01Z; finished 11:07Z; exception types preserved (probed Ensure.That 10.1.0); Length guard was a no-op under Ensure.That(bool) - now really throws NegativeLengthValueException on negative (unreachable in app); seam DomainEventBus.SetCurrentBusResolver; 58 tests; verify PASS 58/58 |
+| T5 | Web host: Minimal API endpoint group, OpenAPI + Scalar, SpaProxy removal, endpoint tests | T4 | Medium | Done | sonnet; started 11:08Z; attempt 1 died 11:17Z on API proxy error ERR_PROXY_TUNNEL (ENV, no escalation); re-dispatched sonnet 11:17Z; finished 11:21Z; GameEndpoints group; OpenAPI+Scalar dev-only verified; D12 carve-out removed, 0 warnings; 63 tests; verify PASS 63/63 |
+| T6 | Docs: README and MODERNIZATION status | T5 | Low | Done | haiku; started 11:22Z; finished 11:23Z; README + MODERNIZATION updated; README notes ASPNETCORE_URLS needed for CRA proxy without SpaProxy |

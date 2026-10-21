@@ -1,4 +1,5 @@
 using Bc.Battleships.Domain.Events;
+using Bc.Battleships.Messages;
 using Bc.Battleships.Persistence.Infrastructure;
 using Bc.Battleships.Persistence.Providers;
 using HandlersServices = Bc.Battleships.Server.Infrastructure.Services;
@@ -15,20 +16,18 @@ namespace Bc.Battleships.Infrastructure
             PersistenceServices.Configure(serviceCollection);
             HandlersServices.Configure(serviceCollection);
 
-            serviceCollection.AddControllersWithViews();
-            serviceCollection.AddEndpointsApiExplorer();
-            serviceCollection.AddSwaggerGen(setup =>
-            {
-                setup.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo()
+            serviceCollection.AddOpenApi(options =>
+                options.AddDocumentTransformer((document, _, _) =>
                 {
-                    Title = "Battleships API"
-                });
-            });
+                    document.Info.Title = "Battleships API";
+                    return Task.CompletedTask;
+                }));
         }
 
         public static async Task InitializeAsync(IServiceProvider serviceProvider)
         {
-            DomainEventBus.SetHttpContextAccessor(serviceProvider.GetRequiredService<IHttpContextAccessor>());
+            var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+            DomainEventBus.SetCurrentBusResolver(() => httpContextAccessor.HttpContext!.RequestServices.GetService<IBus>());
 
             using (var scope = serviceProvider.CreateAsyncScope())
             {

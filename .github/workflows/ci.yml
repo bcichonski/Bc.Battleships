@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  dotnet:
+    name: Backend (build, test, coverage)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore Bc.Battleships.slnx
+
+      # Release configuration: the Debug-only npm install target of the web project does not run.
+      - name: Build
+        run: dotnet build Bc.Battleships.slnx -c Release --no-restore
+
+      - name: Test
+        run: dotnet test Bc.Battleships.slnx -c Release --no-build --collect "XPlat Code Coverage" --results-directory ./TestResults
+
+      - name: Install ReportGenerator
+        run: dotnet tool install --global dotnet-reportgenerator-globaltool
+
+      - name: Generate coverage report
+        run: reportgenerator -reports:"TestResults/**/coverage.cobertura.xml" -targetdir:"CoverageReport" -reporttypes:"Html;MarkdownSummaryGithub"
+
+      - name: Publish coverage summary
+        run: cat CoverageReport/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: CoverageReport
+
+  client:
+    name: Client (lint, test)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/Bc.Battleships/ClientApp
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: src/Bc.Battleships/ClientApp/package-lock.json
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test

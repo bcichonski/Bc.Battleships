@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Bc.Battleships/Bc.Battleships.csproj" />
+    <Project Path="src/Bc.Battleships.Domain/Bc.Battleships.Domain.csproj" />
+    <Project Path="src/Bc.Battleships.EFMigrationsHelper/Bc.Battleships.EFMigrationsHelper.csproj" />
+    <Project Path="src/Bc.Battleships.Messages/Bc.Battleships.Messages.csproj" />
+    <Project Path="src/Bc.Battleships.Persistence/Bc.Battleships.Persistence.csproj" />
+    <Project Path="src/Bc.Battleships.Server/Bc.Battleships.Server.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Bc.Battleships.Tests.Common/Bc.Battleships.Tests.Common.csproj" />
+    <Project Path="tests/Bc.Battleships.Tests.Integration.API/Bc.Battleships.Tests.Integration.API.csproj" />
+    <Project Path="tests/Bc.Battleships.Tests.Integration.Database/Bc.Battleships.Tests.Integration.Database.csproj" />
+    <Project Path="tests/Bc.Battleships.UnitTests.Domain/Bc.Battleships.UnitTests.Domain.csproj" />
+  </Folder>
+</Solution>

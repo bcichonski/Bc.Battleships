@@ -1,0 +1,24 @@
+<Project>
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <!-- ImplicitUsings is intentionally NOT set here: it stays per project, exactly as before. -->
+
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>Default</AnalysisMode>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Package vulnerability audit warnings stay warnings; package upgrades happen in Phase 2. -->
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
+
+    <!-- Temporary: only .NET 8/10 runtimes are installed, so net6.0 assemblies must roll forward. Removed in Phase 2 (retarget). -->
+    <RollForward>Major</RollForward>
+    <!-- Temporary: net6.0 is out of support (NETSDK1138). Removed in Phase 2 (retarget). -->
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+  </PropertyGroup>
+
+</Project>

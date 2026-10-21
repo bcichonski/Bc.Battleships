@@ -1,0 +1,101 @@
+# Bc.Battleships – modernization plan
+
+Status as of 2026-10-21. The baseline is a .NET 6 + CRA/React 17 PoC from July 2022: 6 production projects, 3 test projects, 38 passing tests.
+
+Each phase below is meant to be one PR (or a small series), with the build and tests green at every step.
+
+---
+
+## Phase 0 – Baseline (done)
+
+- [x] Renamed everywhere: namespaces, projects, folders, `package.json`, history and commit messages
+- [x] Stripped build output (`obj/`) that was accidentally committed, from the whole history
+- [x] Build passes and the 38/38 tests pass (run on the .NET 8 runtime via roll-forward, since net6 is EOL)
+- [x] Pushed to `github.com/bcichonski/Bc.Battleships` (private), MIT license
+
+## Phase 1 – Repo hygiene and CI (low risk, no behaviour change) (#1)
+
+- Flatten the `Bc.Battleships/Bc.Battleships/Bc.Battleships` nesting into `src/` + `tests/`
+- `.sln` → `.slnx`
+- Add `Directory.Build.props`: nullable on, `TreatWarningsAsErrors`, analyzers, `LangVersion latest`
+- Add `Directory.Packages.props` for central package management (the test projects currently use mismatched xunit/Test.Sdk/coverlet versions)
+- Add `global.json`, `.editorconfig`, `.gitattributes` (line endings: the repo has BOMs and CRLF)
+- Rewrite the README: what the app is, architecture sketch, how to run (the current one has a stale `[...]BcBattleships\...` path)
+- GitHub Actions: build, test, coverage (coverlet + reportgenerator), client lint/test. Add Dependabot.
+
+## Phase 2 – Platform upgrade (keep behaviour identical) (#2)
+
+| Area | Now | Target |
+|---|---|---|
+| Runtime | net6.0 (EOL Nov 2024) | **net10.0** (LTS; net8 support ends Nov 2026) |
+| EF Core | 6.0.6 | 10.x, keep SQLite |
+| OpenAPI | Swashbuckle 6.3 | built-in `Microsoft.AspNetCore.OpenApi` + Scalar UI |
+| SPA hosting | `Microsoft.AspNetCore.SpaProxy` 6 + CRA | Vite dev server with proxy; static files in prod |
+| Domain deps | `Microsoft.AspNetCore.Http.Abstractions` **2.2** in Domain | removed (see Phase 4: static event bus) |
+| Mediator | MediatR 10 | **[Mediator](https://github.com/martinothamar/Mediator)** 3.x (MIT, source-generated, no reflection; MediatR ≥13 is commercially licensed). `IRequestHandler`/`INotificationHandler` port almost 1:1; handlers return `ValueTask`; registration via `AddMediator()` with compile-time handler discovery. |
+| Assertions | FluentAssertions 6.7 | ⚠ FA ≥8 is commercial. Switch to **AwesomeAssertions** (drop-in fork) or Shouldly |
+| Test framework | xunit 2.4 | xunit v3 |
+| Guards | Ensure.That | BCL `ArgumentNullException.ThrowIfNull` and friends |
+| Controllers | MVC `GameController` | Minimal API endpoint group |
+
+Regenerate the EF migration only if the model changes; the 2022 migration still applies.
+
+## Phase 3 – Frontend rewrite (small: ~650 LoC, most of it template boilerplate) (#3)
+
+- CRA (deprecated) → **Vite + React 19 + TypeScript**
+- Remove unused template dependencies: `oidc-client`, `jquery`, `reactstrap`, `react-router-bootstrap`, the whole `workbox-*` service-worker set, `lodash`, `merge`, `http-proxy-middleware`, `aspnetcore-https.js` / `aspnetcore-react.js`
+- Drop react-router entirely (single screen), or use v7 if more pages are coming
+- Typed API client: hand-written, or generated from the OpenAPI document
+- Fix: `Game.js` calls `newGame()` **during render** (a side effect in render, so StrictMode/re-renders can create several games), then does `history.go(0)` for a full page reload. Move this into an event or effect and refresh state instead of reloading.
+- Tests: Vitest + Testing Library for components; **Playwright** e2e smoke (new game → shoot → hit/miss rendered)
+
+## Phase 4 – Refactoring (where the real value is) (#4)
+
+### Bugs found while reading the code
+
+1. **Ships never occupy row 10 or column 10.** `FleetFactory.GetRandomCoordinates` uses `Random.Next(1, BoardSize)` and `Next(1, BoardSize - length)`, both with exclusive upper bounds on 1-based coordinates. Horizontal ships also never reach column 9. A player who knows this skips a whole row and column.
+   → Fix the bounds and add a property-style test over many seeds checking that every cell is reachable.
+2. **Fire-and-forget domain event through a static service locator.** `Ship.EmitEventOnSinking` calls `DomainEventBus.Instance.Publish(...)` without awaiting it. `Instance` resolves `IBus` from `IHttpContextAccessor` statically. The handler then reloads the game on the *same scoped DbContext* while `ShootCommandHandler` is calling `SaveChangesAsync`, so this risks concurrent DbContext use, and "game over" may not be persisted.
+   → Make game-over an invariant of the aggregate: `Game.Shoot` sets `GameState.Won` when total HP reaches 0. No event, bus, or static needed.
+3. **Shooting an already-sunk compartment reports "Hit" again** and re-emits the sinking event. `GetCompartmentAt(c)?.Hit() != null` is true for any existing compartment, because `Hit()` returns a non-null `bool`.
+   → Return `AlreadyHit` / `Hit` / `Sunk` / `Miss` explicitly.
+4. **Placement can throw at random.** `FleetFactory` gives up after 9 attempts (`< 10`) and throws `FleetFactoryPositioningFailedException`.
+   → Enumerate the valid placements, then pick one at random (deterministic termination).
+5. Client-side: duplicate new-game POSTs (see Phase 3).
+
+### Design
+
+- **There is one global "current game".** The API has no game id, so two browsers share and fight over one game. Introduce resources: `POST /games` → id, `GET /games/{id}`, `POST /games/{id}/shots`. `PUT /game` for shooting is not REST-y anyway.
+- **Testability:** inject `Random`/seed (or a `TimeProvider`-style abstraction) into fleet placement; replace the static `GameContextProvider` with options.
+- **Remove the back-references** `Ship.Owner` and `ComputerPlayer.Game`. They exist only for the event plumbing in (2), and removing them simplifies the EF mapping a lot.
+- **Remove the `#pragma warning disable CS8618/CS8601` blocks.** Use EF constructor binding or `= null!` on private ctors.
+- `ShootCommandHandler` depends on `BattleshipsDbContext` directly → the repository/unit of work should own `SaveChanges`.
+- `HumanPlayer` is created and then ignored by EF. Either delete it, or implement the computer shooting back (feature, Phase 5).
+- **Too many projects for ~1k LoC:** Messages + Server → `Application`; `EFMigrationsHelper` → an `IDesignTimeDbContextFactory` inside Persistence. Target: `Domain`, `Application`, `Infrastructure`, `Api` (+ `web/`).
+- Strongly-typed ids: 6 near-identical `ValueConverter` classes → one generic convention in `ConfigureConventions`, or Vogen.
+- Modern C#: file-scoped namespaces, primary constructors, records for value objects, collection expressions.
+
+### Tests
+
+- The "API integration tests" call MediatR directly with the bus **substituted**, so they never go through HTTP and never exercise the sink → game-over path. Replace them with `WebApplicationFactory` HTTP tests.
+- Add regression tests for bugs 1–4 *before* fixing them.
+- Coverage gate in CI.
+
+## Phase 5 – Optional / stretch (#5)
+
+- Two-sided game (the computer shoots back, with a hunt/target AI)
+- Dockerfile + GHCR image; optional .NET Aspire AppHost for local orchestration
+- Deploy a public demo (Azure Container Apps / Fly.io) as a portfolio piece
+
+---
+
+## Recommended order
+
+1 → 2 → (4: regression tests, then bug fixes) → 3 → 4 (design refactors) → 5.
+
+Phases 1 and 2 are mechanical. Do Phase 4's bug fixes before the frontend rewrite, so the new UI is built against the corrected API shape (`/games/{id}`).
+
+## Open decisions
+
+- Keep it one-sided (as originally scoped) or make it two-sided
+- Make the repo public after Phase 1 as a portfolio piece?

@@ -1,4 +1,4 @@
-using FluentAssertions;
+using AwesomeAssertions;
 using Bc.Battleships.Messages.Queries;
 using System.Threading;
 using System.Threading.Tasks;

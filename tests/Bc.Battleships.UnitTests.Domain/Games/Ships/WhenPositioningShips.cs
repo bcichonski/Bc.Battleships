@@ -1,4 +1,4 @@
-using FluentAssertions;
+using AwesomeAssertions;
 using Bc.Battleships.Domain.AggregateRoots.Games.Ships;
 using Bc.Battleships.Domain.ValueObjects.Enums;
 using Bc.Battleships.Tests.Common.Builders;

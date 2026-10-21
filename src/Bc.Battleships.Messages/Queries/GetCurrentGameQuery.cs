@@ -1,5 +1,5 @@
 using Bc.Battleships.Messages.DTOs;
-using MediatR;
+using Mediator;
 
 namespace Bc.Battleships.Messages.Queries
 {

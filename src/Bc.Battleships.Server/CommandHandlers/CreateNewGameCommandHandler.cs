@@ -1,11 +1,11 @@
 using Bc.Battleships.Domain.AggregateRoots.Games;
 using Bc.Battleships.Domain.Repositories;
 using Bc.Battleships.Messages.Commands;
-using MediatR;
+using Mediator;
 
 namespace Bc.Battleships.Server.CommandHandlers
 {
-    public class CreateNewGameCommandHandler : AsyncRequestHandler<CreateNewGameCommand>
+    public class CreateNewGameCommandHandler : IRequestHandler<CreateNewGameCommand>
     {
         private readonly IGamesRepository _gamesRepository;
 
@@ -14,13 +14,15 @@ namespace Bc.Battleships.Server.CommandHandlers
             _gamesRepository = gamesRepository;
         }
 
-        protected override async Task Handle(CreateNewGameCommand request, CancellationToken cancellationToken)
+        public async ValueTask<Unit> Handle(CreateNewGameCommand request, CancellationToken cancellationToken)
         {
             var currentGame = await _gamesRepository.Get(cancellationToken);
             currentGame?.Stop();
 
             var newGame = Game.CreateNewGame();
             await _gamesRepository.Add(newGame);
+
+            return Unit.Value;
         }
     }
 }

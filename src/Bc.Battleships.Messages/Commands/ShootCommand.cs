@@ -1,5 +1,5 @@
 using Bc.Battleships.Messages.CommandsResults;
-using MediatR;
+using Mediator;
 
 namespace Bc.Battleships.Messages.Commands
 {

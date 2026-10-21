@@ -23,7 +23,25 @@ Each phase below is meant to be one PR (or a small series), with the build and t
 - Rewrite the README: what the app is, architecture sketch, how to run (the current one has a stale `[...]BcBattleships\...` path)
 - GitHub Actions: build, test, coverage (coverlet + reportgenerator), client lint/test. Add Dependabot.
 
-## Phase 2 – Platform upgrade (keep behaviour identical) (#2)
+## Phase 2 – Platform upgrade (keep behaviour identical) (#2) (done)
+
+- [x] Runtime: all projects target **net10.0**; the `RollForward=Major` workaround is gone
+- [x] EF Core 10.0.13 on SQLite. The 2022 `InitialMigration` is untouched and still applies to an empty database. `has-pending-model-changes` reported no changes, so no new migration was added (D3 outcome: none)
+- [x] OpenAPI: Swashbuckle removed. `MapOpenApi()` serves `/openapi/v1.json` and Scalar serves `/scalar/v1`, both in Development only (D4)
+- [x] SpaProxy removed per D5 (package, csproj properties, `DebugEnsureNodeEnv`, launchSettings env var, log category). Publish still builds the client into `wwwroot`
+- [x] MVC removed (D6). `GameController` is replaced by the `GameEndpoints` minimal API group (`GET/POST/PUT /game`), with the JSON contract unchanged
+- [x] Mediator 3 (source-generated) replaces MediatR 10
+- [x] AwesomeAssertions replaces FluentAssertions
+- [x] xunit v3 (`xunit.v3.mtp-off`, VSTest), with the test projects migrated
+- [x] Guards use the BCL (`ArgumentNullException.ThrowIfNull` and friends) instead of `Ensure.That`
+- [x] `Microsoft.AspNetCore.Http.Abstractions` removed from Domain through a bus-resolver seam (D7). The static event bus stays until Phase 4
+- [x] Tests: 63 pass (44 domain unit, 8 database integration, 11 API integration, 5 of them HTTP tests via `WebApplicationFactory`)
+
+Deviations from the plan:
+
+- `xunit.v3.mtp-off` is used instead of the Microsoft Testing Platform runner, to stay on VSTest.
+- `Length`'s guard was a no-op under `Ensure.That`. It now throws `NegativeLengthValueException` on a negative value, which is a deliberate behaviour fix.
+- The Vite proxy is deferred to Phase 3. Until then, the CRA `setupProxy.js` forwards `/game` in Development.
 
 | Area | Now | Target |
 |---|---|---|
@@ -77,7 +95,7 @@ Regenerate the EF migration only if the model changes; the 2022 migration still 
 
 ### Tests
 
-- The "API integration tests" call MediatR directly with the bus **substituted**, so they never go through HTTP and never exercise the sink → game-over path. Replace them with `WebApplicationFactory` HTTP tests.
+- Phase 2 added 5 `WebApplicationFactory` HTTP tests. Any API integration tests that still call Mediator directly with the bus **substituted** never go through HTTP and never exercise the sink → game-over path. Convert them to HTTP tests.
 - Add regression tests for bugs 1–4 *before* fixing them.
 - Coverage gate in CI.
 

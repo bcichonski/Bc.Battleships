@@ -3,7 +3,7 @@ using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Messages.Commands;
 using Bc.Battleships.Messages.CommandsResults;
 using Bc.Battleships.Persistence;
-using MediatR;
+using Mediator;
 using ShootResultEnum = Bc.Battleships.Domain.ValueObjects.Enums.ShootResult;
 
 namespace Bc.Battleships.Server.CommandHandlers
@@ -21,7 +21,7 @@ namespace Bc.Battleships.Server.CommandHandlers
             _battleshipsDbContext = battleshipsDbContext;
         }
 
-        public async Task<ShootResult> Handle(ShootCommand request, CancellationToken cancellationToken)
+        public async ValueTask<ShootResult> Handle(ShootCommand request, CancellationToken cancellationToken)
         {
             var game = await _gamesRepository.Get(cancellationToken);
 

@@ -1,4 +1,3 @@
-using EnsureThat;
 using Bc.Battleships.Domain.AggregateRoots.Games;
 using Bc.Battleships.Domain.AggregateRoots.Games.Players;
 using Bc.Battleships.Domain.AggregateRoots.Games.Ships;
@@ -18,7 +17,7 @@ namespace Bc.Battleships.Server.Services
 
         private static BoardRowDto[] GetBoardState(int boardSize, ComputerPlayer computerPlayer)
         {
-            Ensure.That(computerPlayer.Ships).IsNotNull();
+            ArgumentNullException.ThrowIfNull(computerPlayer.Ships);
 
             var boardShoot = new HashSet<Coordinates>(computerPlayer.CoordinatesShoot.Select(x => x.Coordinates));
 

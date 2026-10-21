@@ -2,7 +2,7 @@ using Bc.Battleships.Domain.Repositories;
 using Bc.Battleships.Messages.DTOs;
 using Bc.Battleships.Messages.Queries;
 using Bc.Battleships.Server.Services;
-using MediatR;
+using Mediator;
 
 namespace Bc.Battleships.Server.QueryHandlers
 {
@@ -15,7 +15,7 @@ namespace Bc.Battleships.Server.QueryHandlers
             _gamesRepository = gamesRepository;
         }
 
-        public async Task<GameDto> Handle(GetCurrentGameQuery request, CancellationToken cancellationToken)
+        public async ValueTask<GameDto> Handle(GetCurrentGameQuery request, CancellationToken cancellationToken)
         {
             var game = await _gamesRepository.Get(cancellationToken);
             

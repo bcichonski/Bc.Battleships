@@ -1,4 +1,3 @@
-using EnsureThat;
 using Bc.Battleships.Domain.AggregateRoots.Games.Ships;
 using Bc.Battleships.Domain.Services.FleetFactory;
 using Bc.Battleships.Domain.ValueObjects;
@@ -39,8 +38,12 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
 
         public void PositionShips()
         {
-            Ensure.That(Ships is null).IsTrue();
-            Ensure.That(Game).IsNotNull();
+            if (Ships is not null)
+            {
+                throw new ArgumentException("Ships are already positioned.", nameof(Ships));
+            }
+
+            ArgumentNullException.ThrowIfNull(Game);
 
 #pragma warning disable CS8604 // Possible null reference argument.
             var fleetFactory = new FleetFactory(Game);

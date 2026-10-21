@@ -13,8 +13,8 @@ The solution is `Bc.Battleships.slnx` at the repository root. Production project
 * **Domain** (`src/Bc.Battleships.Domain`): the game model (`Game`, players, ships, shots) and its rules.
 * **Messages** (`src/Bc.Battleships.Messages`): the commands and queries exchanged with the API.
 * **Persistence** (`src/Bc.Battleships.Persistence`): EF Core with SQLite.
-* **Server** (`src/Bc.Battleships.Server`): command and query handlers, dispatched through MediatR (CQRS).
-* **Web app** (`src/Bc.Battleships`): ASP.NET Core API controllers, Swagger, and the React client in `ClientApp/`.
+* **Server** (`src/Bc.Battleships.Server`): command and query handlers, dispatched through Mediator (CQRS, source-generated).
+* **Web app** (`src/Bc.Battleships`): minimal API endpoints (`Infrastructure/GameEndpoints.cs`), the OpenAPI document and Scalar UI (Development only), and the React client in `ClientApp/`.
 * **EF migrations helper** (`src/Bc.Battleships.EFMigrationsHelper`): design-time support for EF Core migrations.
 
 ```mermaid
@@ -37,27 +37,33 @@ Test projects (`tests/`):
 
 ## Prerequisites
 
-* **.NET 10 SDK** (10.0.100 or a later 10.0.x feature band). `global.json` pins the SDK and allows roll-forward within the 10.0 feature bands. The solution format (`.slnx`) needs SDK 10.
-* **Node.js** with npm, for the React client.
-
-The projects still target `net6.0` and run on the .NET 8 or .NET 10 runtime through roll-forward (`RollForward=Major`). This is temporary and will be removed when the projects move to a supported target framework.
+* **.NET 10 SDK** (10.0.100 or a later 10.0.x feature band). All projects target `net10.0`. `global.json` pins the SDK and allows roll-forward within the 10.0 feature bands only. The solution format (`.slnx`) needs SDK 10.
+* **Node.js** with npm, for the React client. A backend build does not need Node.
 
 ## Running the app
 
-From the repository root:
+In Development, run the backend and the client separately.
+
+Backend, from the repository root:
 
 ```bash
 dotnet run --project src/Bc.Battleships
 ```
 
-A Debug build installs the client's npm packages automatically when `src/Bc.Battleships/ClientApp/node_modules` is missing. The app then starts the React dev server (`npm start`) through SpaProxy.
+* `https://localhost:7191` and `http://localhost:5191`: the ASP.NET Core app (from `src/Bc.Battleships/Properties/launchSettings.json`).
+* In Development only: the OpenAPI document at `https://localhost:7191/openapi/v1.json` and the Scalar UI at `https://localhost:7191/scalar/v1`. The root URL serves the client's `index.html`.
 
-Ports (from `src/Bc.Battleships/Properties/launchSettings.json`):
+Client, in a second terminal, from `src/Bc.Battleships/ClientApp`:
 
-* `https://localhost:7191` and `http://localhost:5191`: the ASP.NET Core app. In Development, Swagger UI is served at the root of this address.
-* `https://localhost:44463`: the React dev server started by SpaProxy (`SpaProxyServerUrl`).
+```bash
+npm start
+```
 
-To run from Visual Studio or Rider, open `Bc.Battleships.slnx` and start the `Bc.Battleships` profile.
+* `https://localhost:44463`: the CRA dev server (`PORT` in `ClientApp/.env`). Open the game here. It forwards `/game` to the backend through `src/setupProxy.js`. The proxy target is `ASPNETCORE_URLS` (or `ASPNETCORE_HTTPS_PORT`) when set, and otherwise `http://localhost:42160`, so point it at the backend's address (for example `ASPNETCORE_URLS=https://localhost:7191`) when you start the client.
+
+Production is unchanged: `dotnet publish` builds the client into `wwwroot`, and the app serves it with static files and the `index.html` fallback.
+
+To run from Visual Studio or Rider, open `Bc.Battleships.slnx` and start the `Bc.Battleships` profile. This starts the backend only, so start the client with `npm start` as well.
 
 ## Running the tests
 
@@ -68,7 +74,7 @@ dotnet build
 dotnet test
 ```
 
-`dotnet test` runs 38 tests: 27 domain unit tests, 6 database integration tests and 5 API integration tests.
+`dotnet test` runs 63 tests: 44 domain unit tests, 8 database integration tests and 11 API integration tests (5 of them are HTTP endpoint tests through `WebApplicationFactory`).
 
 Client, from `src/Bc.Battleships/ClientApp`:
 

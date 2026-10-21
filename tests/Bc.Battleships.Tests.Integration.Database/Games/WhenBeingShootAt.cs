@@ -1,4 +1,4 @@
-using FluentAssertions;
+using AwesomeAssertions;
 using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Persistence.Repositories;
 using Bc.Battleships.Tests.Common.Builders;

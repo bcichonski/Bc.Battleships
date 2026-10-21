@@ -58,14 +58,16 @@ Deviations from the plan:
 
 Regenerate the EF migration only if the model changes; the 2022 migration still applies.
 
-## Phase 3 – Frontend rewrite (small: ~650 LoC, most of it template boilerplate) (#3)
+## Phase 3 – Frontend rewrite (small: ~650 LoC, most of it template boilerplate) (#3) (done)
 
-- CRA (deprecated) → **Vite + React 19 + TypeScript**
-- Remove unused template dependencies: `oidc-client`, `jquery`, `reactstrap`, `react-router-bootstrap`, the whole `workbox-*` service-worker set, `lodash`, `merge`, `http-proxy-middleware`, `aspnetcore-https.js` / `aspnetcore-react.js`
-- Drop react-router entirely (single screen), or use v7 if more pages are coming
-- Typed API client: hand-written, or generated from the OpenAPI document
-- Fix: `Game.js` calls `newGame()` **during render** (a side effect in render, so StrictMode/re-renders can create several games), then does `history.go(0)` for a full page reload. Move this into an event or effect and refresh state instead of reloading.
-- Tests: Vitest + Testing Library for components; **Playwright** e2e smoke (new game → shoot → hit/miss rendered)
+- [x] CRA (deprecated) → **Vite + React 19 + TypeScript** (strict mode, `createRoot`)
+- [x] Remove unused template dependencies: `oidc-client`, `jquery`, `reactstrap`, `react-router-bootstrap`, the whole `workbox-*` service-worker set, `lodash`, `merge`, `http-proxy-middleware`, `aspnetcore-https.js` / `aspnetcore-react.js`
+- [x] Drop react-router entirely (single screen); Bootstrap CSS kept, no Bootstrap JS
+- [x] Typed API client: hand-written (`/game` is only known to one module); the OpenAPI document was not used for generation
+- [x] Fix: the new-game request is an explicit user action (no `newGame()` in render) and the page reload is gone. The state hook refreshes the board with `GET /game`
+- [x] Vite dev server on `http://localhost:44463` proxies `/game` to the backend; the CRA `setupProxy.js` is removed
+- [x] Tests: Vitest + Testing Library for components; **Playwright** e2e smoke (new game → shoot → hit/miss rendered → game over), run by the `e2e` CI job
+
 
 ## Phase 4 – Refactoring (where the real value is) (#4)
 
@@ -79,7 +81,7 @@ Regenerate the EF migration only if the model changes; the 2022 migration still 
    → Return `AlreadyHit` / `Hit` / `Sunk` / `Miss` explicitly.
 4. **Placement can throw at random.** `FleetFactory` gives up after 9 attempts (`< 10`) and throws `FleetFactoryPositioningFailedException`.
    → Enumerate the valid placements, then pick one at random (deterministic termination).
-5. Client-side: duplicate new-game POSTs (see Phase 3).
+5. Client-side: duplicate new-game POSTs. **Fixed in Phase 3**: starting a game is an explicit action that sends one `POST /game`, and the client no longer reloads the page.
 
 ### Design
 

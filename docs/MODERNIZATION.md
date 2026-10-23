@@ -34,7 +34,7 @@ Each phase below is meant to be one PR (or a small series), with the build and t
 - [x] AwesomeAssertions replaces FluentAssertions
 - [x] xunit v3 (`xunit.v3.mtp-off`, VSTest), with the test projects migrated
 - [x] Guards use the BCL (`ArgumentNullException.ThrowIfNull` and friends) instead of `Ensure.That`
-- [x] `Microsoft.AspNetCore.Http.Abstractions` removed from Domain through a bus-resolver seam (D7). The static event bus stays until Phase 4
+- [x] `Microsoft.AspNetCore.Http.Abstractions` removed from Domain through a bus-resolver seam (D7). The static `DomainEventBus.Instance` and the seam were removed in Phase 4a (#25); the domain events infrastructure stays, injected through DI
 - [x] Tests: 63 pass (44 domain unit, 8 database integration, 11 API integration, 5 of them HTTP tests via `WebApplicationFactory`)
 
 Deviations from the plan:
@@ -49,7 +49,7 @@ Deviations from the plan:
 | EF Core | 6.0.6 | 10.x, keep SQLite |
 | OpenAPI | Swashbuckle 6.3 | built-in `Microsoft.AspNetCore.OpenApi` + Scalar UI |
 | SPA hosting | `Microsoft.AspNetCore.SpaProxy` 6 + CRA | Vite dev server with proxy; static files in prod |
-| Domain deps | `Microsoft.AspNetCore.Http.Abstractions` **2.2** in Domain | removed (see Phase 4: static event bus) |
+| Domain deps | `Microsoft.AspNetCore.Http.Abstractions` **2.2** in Domain | removed (see Phase 4a: static event bus, removed in #25) |
 | Mediator | MediatR 10 | **[Mediator](https://github.com/martinothamar/Mediator)** 3.x (MIT, source-generated, no reflection; MediatR ≥13 is commercially licensed). `IRequestHandler`/`INotificationHandler` port almost 1:1; handlers return `ValueTask`; registration via `AddMediator()` with compile-time handler discovery. |
 | Assertions | FluentAssertions 6.7 | ⚠ FA ≥8 is commercial. Switch to **AwesomeAssertions** (drop-in fork) or Shouldly |
 | Test framework | xunit 2.4 | xunit v3 |
@@ -75,7 +75,7 @@ Regenerate the EF migration only if the model changes; the 2022 migration still 
 
 1. **Ships never occupy row 10 or column 10.** `FleetFactory.GetRandomCoordinates` uses `Random.Next(1, BoardSize)` and `Next(1, BoardSize - length)`, both with exclusive upper bounds on 1-based coordinates. Horizontal ships also never reach column 9. A player who knows this skips a whole row and column.
    → Fix the bounds and add a property-style test over many seeds checking that every cell is reachable.
-2. **Fire-and-forget domain event through a static service locator.** `Ship.EmitEventOnSinking` calls `DomainEventBus.Instance.Publish(...)` without awaiting it. `Instance` resolves `IBus` from `IHttpContextAccessor` statically. The handler then reloads the game on the *same scoped DbContext* while `ShootCommandHandler` is calling `SaveChangesAsync`, so this risks concurrent DbContext use, and "game over" may not be persisted.
+2. **Fire-and-forget domain event through a static service locator.** **Fixed in Phase 4a (#25).** `Ship.EmitEventOnSinking` calls `DomainEventBus.Instance.Publish(...)` without awaiting it. `Instance` resolves `IBus` from `IHttpContextAccessor` statically. The handler then reloads the game on the *same scoped DbContext* while `ShootCommandHandler` is calling `SaveChangesAsync`, so this risks concurrent DbContext use, and "game over" may not be persisted.
    → Make game-over an invariant of the aggregate: `Game.Shoot` sets `GameState.Won` when total HP reaches 0. No event, bus, or static needed.
 3. **Shooting an already-sunk compartment reports "Hit" again** and re-emits the sinking event. `GetCompartmentAt(c)?.Hit() != null` is true for any existing compartment, because `Hit()` returns a non-null `bool`.
    → Return `AlreadyHit` / `Hit` / `Sunk` / `Miss` explicitly.
@@ -87,7 +87,7 @@ Regenerate the EF migration only if the model changes; the 2022 migration still 
 
 - **There is one global "current game".** The API has no game id, so two browsers share and fight over one game. Introduce resources: `POST /games` → id, `GET /games/{id}`, `POST /games/{id}/shots`. `PUT /game` for shooting is not REST-y anyway.
 - **Testability:** inject `Random`/seed (or a `TimeProvider`-style abstraction) into fleet placement; replace the static `GameContextProvider` with options.
-- **Remove the back-references** `Ship.Owner` and `ComputerPlayer.Game`. They exist only for the event plumbing in (2), and removing them simplifies the EF mapping a lot.
+- [x] **Remove the back-references (done in #25)** `Ship.Owner` and `ComputerPlayer.Game`. They exist only for the event plumbing in (2), and removing them simplifies the EF mapping a lot.
 - **Remove the `#pragma warning disable CS8618/CS8601` blocks.** Use EF constructor binding or `= null!` on private ctors.
 - `ShootCommandHandler` depends on `BattleshipsDbContext` directly → the repository/unit of work should own `SaveChanges`.
 - `HumanPlayer` is created and then ignored by EF. Either delete it, or implement the computer shooting back (feature, Phase 5).

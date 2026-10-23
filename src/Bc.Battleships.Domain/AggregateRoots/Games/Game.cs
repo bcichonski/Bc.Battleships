@@ -34,11 +34,20 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games
 
         public void PositionFleets()
         {
-            ComputerPlayer.PositionShips();
+            ComputerPlayer.PositionShips(GameContext);
         }
 
         public ShootResult Shoot(Coordinates coordinates)
-            => ComputerPlayer.IncomingShot(coordinates);
+        {
+            var result = ComputerPlayer.IncomingShot(coordinates);
+
+            if (GameState == GameState.Active && ComputerPlayer.CurrentHitPoints.Value == 0)
+            {
+                GameState = GameState.Won;
+            }
+
+            return result;
+        }
 
         public void Stop()
         {
@@ -47,9 +56,7 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games
 
         public static Game CreateNewGame()
         {
-            var computerPlayer = new ComputerPlayer();
-            var newGame = new Game(new GameId(), computerPlayer);
-            computerPlayer.SetOwner(newGame);
+            var newGame = new Game(new GameId(), new ComputerPlayer());
 
             newGame.PositionFleets();
 

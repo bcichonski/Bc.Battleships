@@ -1,5 +1,4 @@
 using Bc.Battleships.Domain.Repositories;
-using Bc.Battleships.Messages;
 using Bc.Battleships.Persistence;
 using Mediator;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,9 +19,6 @@ namespace Bc.Battleships.Tests.Integration.API
         private readonly Lazy<IGamesRepository> _gamesRepository;
         public IGamesRepository GamesRepository => _gamesRepository.Value;
 
-        private readonly Lazy<IBus> _bus;
-        public IBus Bus => _bus.Value;
-
         public ApiTestContext(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
@@ -30,7 +26,6 @@ namespace Bc.Battleships.Tests.Integration.API
             _dbContext = new Lazy<BattleshipsDbContext>(() => _serviceProvider.GetRequiredService<BattleshipsDbContext>());
             _mediator = new Lazy<IMediator>(() => _serviceProvider.GetRequiredService<IMediator>());
             _gamesRepository = new Lazy<IGamesRepository>(() => _serviceProvider.GetRequiredService<IGamesRepository>());
-            _bus = new Lazy<IBus>(() => _serviceProvider.GetRequiredService<IBus>());
         }
 
         public void Dispose()

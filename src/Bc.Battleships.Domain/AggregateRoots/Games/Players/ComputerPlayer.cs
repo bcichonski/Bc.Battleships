@@ -18,11 +18,8 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
         public IList<Ship>? Ships { get; private set; } = null;
         public IList<ShotCoordinates> CoordinatesShoot { get; }
 
-        public Game? Game { get; private set; }
-
-        public ComputerPlayer(Game? game, IList<Ship>? ships)
+        public ComputerPlayer(IList<Ship>? ships)
         {
-            Game = game;
             Ships = ships;
             CoordinatesShoot = new List<ShotCoordinates>();
         }
@@ -31,23 +28,16 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
         internal ComputerPlayer() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-        internal void SetOwner(Game game)
-        {
-            Game = game;
-        }
-
-        public void PositionShips()
+        public void PositionShips(GameContext gameContext)
         {
             if (Ships is not null)
             {
                 throw new ArgumentException("Ships are already positioned.", nameof(Ships));
             }
 
-            ArgumentNullException.ThrowIfNull(Game);
+            ArgumentNullException.ThrowIfNull(gameContext);
 
-#pragma warning disable CS8604 // Possible null reference argument.
-            var fleetFactory = new FleetFactory(Game);
-#pragma warning restore CS8604 // Possible null reference argument.
+            var fleetFactory = new FleetFactory(gameContext);
 
             Ships = fleetFactory.BuildAndPositionShips().ToList();
         }

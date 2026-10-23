@@ -1,4 +1,3 @@
-using Bc.Battleships.Domain.AggregateRoots.Games;
 using Bc.Battleships.Domain.AggregateRoots.Games.Players;
 using Bc.Battleships.Domain.AggregateRoots.Games.Ships;
 using Bc.Battleships.Domain.ValueObjects;
@@ -9,13 +8,6 @@ namespace Bc.Battleships.Tests.Common.Builders
     {
         private ISet<Coordinates>? _coordinatesShot = new HashSet<Coordinates>() { new Coordinates(1, 1) };
         private IList<Ship>? _ships = CreateDefaultFleet();
-        private Game? _game;
-
-        public ComputerPlayerBuilder WithGame(Game game)
-        {
-            _game = game;
-            return this;
-        }
 
         public ComputerPlayerBuilder WithFleet(IList<Ship> ships)
         {
@@ -41,12 +33,10 @@ namespace Bc.Battleships.Tests.Common.Builders
 
         public ComputerPlayer Build()
         {
-            var computerPlayer = new ComputerPlayer(_game, _ships);
+            var computerPlayer = new ComputerPlayer(_ships);
 
             if (_ships != null)
             {
-                SetShipsOwner(computerPlayer);
-
                 if (_coordinatesShot != null)
                 {
                     ShootAll(computerPlayer, _coordinatesShot);
@@ -61,14 +51,6 @@ namespace Bc.Battleships.Tests.Common.Builders
             foreach (var coordinates in coordinatesShot)
             {
                 computerPlayer.IncomingShot(coordinates);
-            }
-        }
-
-        private void SetShipsOwner(ComputerPlayer computerPlayer)
-        {
-            foreach (var ship in _ships!)
-            {
-                ship.SetOwner(computerPlayer);
             }
         }
 

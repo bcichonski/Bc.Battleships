@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bc.Battleships.Domain\Bc.Battleships.Domain.csproj" />
+    <ProjectReference Include="..\Bc.Battleships.Messages\Bc.Battleships.Messages.csproj" />
     <ProjectReference Include="..\Bc.Battleships.Persistence\Bc.Battleships.Persistence.csproj" />
   </ItemGroup>
 

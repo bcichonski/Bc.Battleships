@@ -1,5 +1,3 @@
-using Bc.Battleships.Domain.Events;
-using Bc.Battleships.Messages;
 using Bc.Battleships.Persistence.Infrastructure;
 using Bc.Battleships.Persistence.Providers;
 using HandlersServices = Bc.Battleships.Server.Infrastructure.Services;
@@ -11,7 +9,6 @@ namespace Bc.Battleships.Infrastructure
     {
         public static void Configure(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddHttpContextAccessor();
             serviceCollection.AddSingleton<IPersistenceConfigurationProvider, ConfigurationProvider>();
             PersistenceServices.Configure(serviceCollection);
             HandlersServices.Configure(serviceCollection);
@@ -26,9 +23,6 @@ namespace Bc.Battleships.Infrastructure
 
         public static async Task InitializeAsync(IServiceProvider serviceProvider)
         {
-            var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
-            DomainEventBus.SetCurrentBusResolver(() => httpContextAccessor.HttpContext!.RequestServices.GetService<IBus>());
-
             using (var scope = serviceProvider.CreateAsyncScope())
             {
                 await scope.ServiceProvider.GetRequiredService<DatabaseMigrator>().ApplyMigrationsIfNeeded();

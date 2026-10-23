@@ -1,4 +1,5 @@
 using Bc.Battleships.Domain.AggregateRoots.Games;
+using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Persistence.Configurations.Converters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -21,7 +22,7 @@ namespace Bc.Battleships.Persistence.Configurations
                 x.Ignore(y => y.CurrentHitPoints);
                 x.Property(y => y.Id)
                     .HasConversion<PlayerIdConverter>();
-                x.WithOwner(y => y.Game);
+                x.WithOwner();
                 x.OwnsMany(y => y.CoordinatesShoot, y =>
                 {
                     y.HasKey(z => z.Id);
@@ -41,7 +42,8 @@ namespace Bc.Battleships.Persistence.Configurations
                      y.Property(z => z.Length)
                         .HasConversion<LengthConverter>();
                      y.Ignore(z => z.CurrentHitPoints);
-                     y.WithOwner(z => z.Owner);
+                     y.Property<GameId>("OwnerGameId").HasConversion<GameIdConverter>().IsRequired();
+                     y.WithOwner().HasForeignKey("OwnerGameId");
 
                      y.OwnsMany(z => z.Compartments, z =>
                      {

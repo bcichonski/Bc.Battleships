@@ -28,11 +28,7 @@ namespace Bc.Battleships.Tests.Common.Builders
                 .WithFleetPositioned(_shipsPositioned)
                 .Build();
 
-            var game = new Game(new GameId(), _computerPlayer);
-
-            _computerPlayer.SetOwner(game);
-
-            return game;
+            return new Game(new GameId(), _computerPlayer);
         }
     }
 }

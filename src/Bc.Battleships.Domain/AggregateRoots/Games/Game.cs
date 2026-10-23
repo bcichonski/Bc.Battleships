@@ -32,14 +32,19 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 #pragma warning restore CS8601 // Possible null reference assignment.
 
-        public void PositionFleets()
+        public void PositionFleets(Random? random = null)
         {
-            ComputerPlayer.PositionShips(GameContext);
+            ComputerPlayer.PositionShips(GameContext, random);
         }
 
         public ShootResult Shoot(Coordinates coordinates)
         {
             var result = ComputerPlayer.IncomingShot(coordinates);
+
+            if (result == ShootResult.AlreadyShot)
+            {
+                return result;
+            }
 
             if (GameState == GameState.Active && ComputerPlayer.CurrentHitPoints.Value == 0)
             {
@@ -54,11 +59,11 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games
             GameState = GameState.Ended;
         }
 
-        public static Game CreateNewGame()
+        public static Game CreateNewGame(Random? random = null)
         {
             var newGame = new Game(new GameId(), new ComputerPlayer());
 
-            newGame.PositionFleets();
+            newGame.PositionFleets(random);
 
             return newGame;
         }

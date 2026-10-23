@@ -1,3 +1,4 @@
+using Bc.Battleships.Domain.AggregateRoots.Games;
 using Bc.Battleships.Domain.Repositories;
 using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Messages.Commands;
@@ -30,11 +31,20 @@ namespace Bc.Battleships.Server.CommandHandlers
                 return new ShootResult(false, GAME_ENDED);
             }
 
-            var result = game!.Shoot(new Coordinates(request.Column + 1, request.Row + 1));
+            var coordinates = new Coordinates(request.Column + 1, request.Row + 1);
+            var result = game!.Shoot(coordinates);
 
             await _battleshipsDbContext.SaveChangesAsync(cancellationToken);
 
-            return new ShootResult(result == ShootResultEnum.Hit, game.ComputerPlayer.CurrentHitPoints.Value);
+            return new ShootResult(IsCellHit(game, coordinates, result), game.ComputerPlayer.CurrentHitPoints.Value);
         }
+
+        private static bool IsCellHit(Game game, Coordinates coordinates, ShootResultEnum result)
+            => result switch
+            {
+                ShootResultEnum.Hit or ShootResultEnum.Sunk => true,
+                ShootResultEnum.AlreadyShot => game.ComputerPlayer.IsFloodedAt(coordinates),
+                _ => false
+            };
     }
 }

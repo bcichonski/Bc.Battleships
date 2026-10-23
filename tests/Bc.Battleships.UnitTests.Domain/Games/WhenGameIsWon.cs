@@ -73,6 +73,41 @@ namespace Bc.Battleships.UnitTests.Domain.Games
             game.GameState.Should().Be(GameState.Won);
         }
 
+        [Fact]
+        public void ShouldStayActiveWhenHitCompartmentIsShotAgain()
+        {
+            var game = BuildGame([new ShipBuilder().WithCoordinates(1, 1).WithLength(3).Build()], shot: [new Coordinates(1, 1)]);
+
+            var result = game.Shoot(new Coordinates(1, 1));
+
+            result.Should().Be(ShootResult.AlreadyShot);
+            game.GameState.Should().Be(GameState.Active);
+            game.ComputerPlayer.CurrentHitPoints.Value.Should().Be(2);
+        }
+
+        [Fact]
+        public void ShouldReportSunkAndBeWonWhenLastCompartmentIsFlooded()
+        {
+            var game = BuildGame([new ShipBuilder().WithCoordinates(1, 1).WithLength(2).Build()], shot: [new Coordinates(1, 1)]);
+
+            var result = game.Shoot(new Coordinates(2, 1));
+
+            result.Should().Be(ShootResult.Sunk);
+            game.GameState.Should().Be(GameState.Won);
+        }
+
+        [Fact]
+        public void ShouldStayWonWhenSunkShipIsShotAgain()
+        {
+            var game = BuildGame([new ShipBuilder().WithCoordinates(1, 1).WithLength(1).Build()], shot: []);
+            game.Shoot(new Coordinates(1, 1));
+
+            var result = game.Shoot(new Coordinates(1, 1));
+
+            result.Should().Be(ShootResult.AlreadyShot);
+            game.GameState.Should().Be(GameState.Won);
+        }
+
         private static Game BuildGame(IList<Bc.Battleships.Domain.AggregateRoots.Games.Ships.Ship> ships, IEnumerable<Coordinates> shot)
         {
             var computerPlayer = new ComputerPlayerBuilder()

@@ -40,10 +40,20 @@ What this costs, and the cases where it is the wrong tool.
 <!-- First real decision goes here. Delete this comment and the template above once the file
      has a few entries and the shape is self-evident from them. -->
 
-## (no decisions recorded yet)
+## Domain events: keep the infrastructure, publish only through an injected, awaited bus
 
-Seeded by `/grind-setup`. Until this file has content, `create-spec-plan` will find no prior art
-and will raise more Open Questions than it otherwise would — so the first few entries pay for
-themselves quickly. Good first candidates: how errors propagate (exceptions vs a result type),
-how identifiers are generated and whether internal ids may leak past the API boundary, and
-whether a repository abstraction sits over the ORM.
+### Purpose
+Lets one aggregate tell others that something happened (e.g. a future `GameWon` for player statistics) without coupling them.
+
+### Rationale
+Decided in #25. The original static `DomainEventBus.Instance` (service locator via `IHttpContextAccessor`, fire-and-forget, handler reusing the scoped DbContext mid-save) was removed. The event abstractions were deliberately **kept** at the owner's request even though nothing publishes an event today, so the next story that needs one doesn't re-introduce them ad hoc.
+
+### Usage
+- Event types implement `IDomainEvent` (Domain, `Events/`), which extends `IEvent` (Messages, a Mediator `INotification`).
+- Publish through `IDomainEventBus`, injected (scoped; registered in `Server/Infrastructure/Services.cs` with `IBus` → `Bus` → Mediator) and **awaited**. Never through a static.
+- Publish from the application layer (command handler) **after** the aggregate change is saved, not from inside entities. Entities don't hold references back to their owners for event purposes.
+- Handlers may live in Domain or Server; Mediator's source generator scans both (plus Messages).
+- Rules *inside* one aggregate (e.g. game-over when the fleet's HP hits 0) are enforced synchronously by the aggregate root, never via an event.
+
+### Trade-offs
+Cross-aggregate reactions published after save are eventually consistent: a failing handler doesn't roll back the first aggregate. If that matters, add an outbox rather than publishing inside the same `SaveChangesAsync`.

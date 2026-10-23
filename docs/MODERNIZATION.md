@@ -34,7 +34,7 @@ Each phase below is meant to be one PR (or a small series), with the build and t
 - [x] AwesomeAssertions replaces FluentAssertions
 - [x] xunit v3 (`xunit.v3.mtp-off`, VSTest), with the test projects migrated
 - [x] Guards use the BCL (`ArgumentNullException.ThrowIfNull` and friends) instead of `Ensure.That`
-- [x] `Microsoft.AspNetCore.Http.Abstractions` removed from Domain through a bus-resolver seam (D7). The static event bus and the seam were removed in Phase 4a (#25)
+- [x] `Microsoft.AspNetCore.Http.Abstractions` removed from Domain through a bus-resolver seam (D7). The static `DomainEventBus.Instance` and the seam were removed in Phase 4a (#25); the domain events infrastructure stays, injected through DI
 - [x] Tests: 63 pass (44 domain unit, 8 database integration, 11 API integration, 5 of them HTTP tests via `WebApplicationFactory`)
 
 Deviations from the plan:

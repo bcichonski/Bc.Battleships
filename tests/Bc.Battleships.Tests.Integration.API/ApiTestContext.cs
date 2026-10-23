@@ -19,6 +19,8 @@ namespace Bc.Battleships.Tests.Integration.API
         private readonly Lazy<IGamesRepository> _gamesRepository;
         public IGamesRepository GamesRepository => _gamesRepository.Value;
 
+        public IServiceProvider Services => _serviceProvider;
+
         public ApiTestContext(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));

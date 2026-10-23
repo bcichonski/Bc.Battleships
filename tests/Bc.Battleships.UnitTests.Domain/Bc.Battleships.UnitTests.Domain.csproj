@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Bc.Battleships.Domain\Bc.Battleships.Domain.csproj" />
-    <ProjectReference Include="..\..\src\Bc.Battleships.Messages\Bc.Battleships.Messages.csproj" />
     <ProjectReference Include="..\Bc.Battleships.Tests.Common\Bc.Battleships.Tests.Common.csproj" />
   </ItemGroup>
 

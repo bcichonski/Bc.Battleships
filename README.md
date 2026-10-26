@@ -52,7 +52,7 @@ Backend, from the repository root:
 dotnet run --project src/Bc.Battleships
 ```
 
-* `https://localhost:7191` and `http://localhost:5191`: the ASP.NET Core app (from `src/Bc.Battleships/Properties/launchSettings.json`).
+* `https://localhost:7191` and `http://localhost:5191`: the ASP.NET Core app (from the `Bc.Battleships` profile in `src/Bc.Battleships/Properties/launchSettings.json`, which sets `ASPNETCORE_ENVIRONMENT=Development`). The SQLite connection string is in `appsettings.Development.json`, so the app must run in Development (or with a `ConnectionString` environment variable).
 * In Development only: the OpenAPI document at `https://localhost:7191/openapi/v1.json` and the Scalar UI at `https://localhost:7191/scalar/v1`. The root URL serves the client's `index.html`.
 
 Client, in a second terminal, from `src/Bc.Battleships/ClientApp`:
@@ -62,7 +62,7 @@ npm ci
 npm run dev
 ```
 
-* `http://localhost:44463`: the Vite dev server (plain HTTP, `strictPort`). Open the game here. It forwards `/games` to the backend. The proxy target is the first URL in `ASPNETCORE_URLS` when that is set, and otherwise `http://localhost:5191` (the HTTP profile of the backend). To proxy to a different backend, start the client with that address, for example `ASPNETCORE_URLS=https://localhost:7191 npm run dev`. The proxy accepts self-signed certificates.
+* `http://localhost:44463`: the Vite dev server (plain HTTP, `strictPort`). Open the game here. It forwards `/games` to the backend. The proxy target is the first URL in `ASPNETCORE_URLS` when that is set, and otherwise `http://localhost:5191` (the HTTP URL of the backend; the backend does not redirect HTTP to HTTPS in Development, so this works as is). To proxy to a different backend, start the client with that address, for example `ASPNETCORE_URLS=https://localhost:7191 npm run dev`. The proxy accepts self-signed certificates.
 * API routes (each game has its own id, so several browsers can play at once): `POST /games` creates a game and returns `201` with the game and a `Location` header; `GET /games/{id}` returns the game state (`404` when unknown); `POST /games/{id}/shots` fires a shot and returns the result (`404` for an unknown game, `409` when the game is already over). The Scalar UI documents them.
 * `vite.config.ts` honours an optional `VITE_CACHE_DIR` environment variable. Only set it where `node_modules/.vite` is not writable.
 

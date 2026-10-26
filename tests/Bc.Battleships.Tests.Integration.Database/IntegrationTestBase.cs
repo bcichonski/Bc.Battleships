@@ -2,6 +2,7 @@ using Bc.Battleships.Infrastructure;
 using Bc.Battleships.Infrastructure.Infrastructure;
 using Bc.Battleships.Infrastructure.Providers;
 using Bc.Battleships.Tests.Common;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
@@ -10,6 +11,8 @@ namespace Bc.Battleships.Tests.Integration.Database;
 
 public class IntegrationTestBase : IDisposable
 {
+    private readonly TestDatabase _database = new("db");
+
     protected IServiceProvider ServiceProvider { get; }
 
     public IntegrationTestBase()
@@ -26,15 +29,14 @@ public class IntegrationTestBase : IDisposable
     private Task InitializeDatabase()
         => InScope(async dbc =>
           {
-              await dbc!.Database.EnsureDeletedAsync();
-              await dbc!.Database.EnsureCreatedAsync();
+              await dbc.Database.MigrateAsync();
           });
 
     public virtual void ConfigureServices(ServiceCollection serviceCollection)
     {
-        serviceCollection.AddSingleton<IPersistenceConfigurationProvider, TestConfigurationProvider>();
+        serviceCollection.AddSingleton<IPersistenceConfigurationProvider>(new FixedConfigurationProvider(_database.ConnectionString));
         
-        Services.Configure(serviceCollection);
+        Bc.Battleships.Infrastructure.Infrastructure.Services.Configure(serviceCollection);
     }
 
     public async Task InScope(Func<BattleshipsDbContext, Task> action)
@@ -55,7 +57,13 @@ public class IntegrationTestBase : IDisposable
 
     public void Dispose()
     {
-        InScope(dbc => dbc.Database.EnsureDeleted());
+        (ServiceProvider as IDisposable)?.Dispose();
+        _database.Dispose();
         GC.SuppressFinalize(this);
+    }
+
+    private sealed class FixedConfigurationProvider(string connectionString) : IPersistenceConfigurationProvider
+    {
+        public string ConnectionString { get; } = connectionString;
     }
 }

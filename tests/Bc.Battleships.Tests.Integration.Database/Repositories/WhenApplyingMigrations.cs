@@ -2,13 +2,12 @@ using Bc.Battleships.Domain.Repositories;
 using Bc.Battleships.Infrastructure;
 using Bc.Battleships.Infrastructure.Infrastructure;
 using Bc.Battleships.Infrastructure.Providers;
+using Bc.Battleships.Tests.Common;
 using Bc.Battleships.Tests.Common.Builders;
 using AwesomeAssertions;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -17,14 +16,14 @@ namespace Bc.Battleships.Tests.Integration.Database.Repositories;
 
 public class WhenApplyingMigrations : IDisposable
 {
-    private readonly string _databaseFile = Path.Combine(Path.GetTempPath(), $"battleships.migrations.{Path.GetRandomFileName()}.db");
+    private readonly TestDatabase _database = new("migrations");
     private readonly ServiceProvider _serviceProvider;
 
     public WhenApplyingMigrations()
     {
         var services = new ServiceCollection();
-        services.AddSingleton<IPersistenceConfigurationProvider>(new FixedConfigurationProvider($"Data Source = {_databaseFile}"));
-        Services.Configure(services);
+        services.AddSingleton<IPersistenceConfigurationProvider>(new FixedConfigurationProvider(_database.ConnectionString));
+        Bc.Battleships.Infrastructure.Infrastructure.Services.Configure(services);
         _serviceProvider = services.BuildServiceProvider();
     }
 
@@ -68,15 +67,12 @@ public class WhenApplyingMigrations : IDisposable
     public void Dispose()
     {
         _serviceProvider.Dispose();
-        SqliteConnection.ClearAllPools();
-        File.Delete(_databaseFile);
+        _database.Dispose();
         GC.SuppressFinalize(this);
     }
 
-    private sealed class FixedConfigurationProvider : IPersistenceConfigurationProvider
+    private sealed class FixedConfigurationProvider(string connectionString) : IPersistenceConfigurationProvider
     {
-        public FixedConfigurationProvider(string connectionString) => ConnectionString = connectionString;
-
-        public string ConnectionString { get; }
+        public string ConnectionString { get; } = connectionString;
     }
 }

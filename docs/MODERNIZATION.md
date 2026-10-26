@@ -97,9 +97,9 @@ Regenerate the EF migration only if the model changes; the 2022 migration still 
 
 ### Tests
 
-- Phase 2 added 5 `WebApplicationFactory` HTTP tests. Any API integration tests that still call Mediator directly with the bus **substituted** never go through HTTP and never exercise the sink → game-over path. Convert them to HTTP tests.
-- Add regression tests for bugs 1–4 *before* fixing them.
-- Coverage gate in CI.
+- [x] Phase 2 added 5 `WebApplicationFactory` HTTP tests. Any API integration tests that still call Mediator directly with the bus **substituted** never go through HTTP and never exercise the sink → game-over path. Convert them to HTTP tests (done in #27).
+- [x] Add regression tests for bugs 1–4 *before* fixing them (done in #4).
+- [x] Coverage in CI: `scripts/coverage.sh` measures filtered coverage and warns (does not fail) below 90 % line / 85 % branch (done in #27; a hard gate was dropped at the owner's request).
 
 ## Phase 5 – Optional / stretch (#5)
 

@@ -9,30 +9,19 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using AwesomeAssertions;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
+using Bc.Battleships.Tests.Common;
 using Xunit;
+using static Bc.Battleships.Tests.Integration.API.GameApi;
 
 namespace Bc.Battleships.Tests.Integration.API;
 
 public class GameEndpointsTests : IDisposable
 {
-    private const string ProblemContentType = "application/problem+json";
-
-    private readonly string _databasePath = Path.Combine(Path.GetTempPath(), $"battleships.endpoints.{Path.GetRandomFileName()}.db");
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly BattleshipsWebApplicationFactory _factory = new();
     private readonly HttpClient _client;
-    private readonly List<IDisposable> _disposables = [];
 
     public GameEndpointsTests()
     {
-        _factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
-            builder.ConfigureAppConfiguration((_, configuration) =>
-                configuration.AddInMemoryCollection(
-                [
-                    new KeyValuePair<string, string?>("ConnectionStrings:ConnectionString", $"Data Source={_databasePath}")
-                ])));
         _client = _factory.CreateClient();
     }
 
@@ -260,23 +249,8 @@ public class GameEndpointsTests : IDisposable
         shots.TryGetProperty("409", out _).Should().BeTrue();
     }
 
-    private const int Unknown = 0;
-    private const int Hit = 2;
-
-    private static CancellationToken Ct => TestContext.Current.CancellationToken;
-
     private HttpClient CreateClient(int boardSize, int[] shipLengths)
-    {
-        var settings = new List<KeyValuePair<string, string?>> { new("Game:BoardSize", boardSize.ToString()) };
-        settings.AddRange(shipLengths.Select((length, index) =>
-            new KeyValuePair<string, string?>($"Game:ShipLengths:{index}", length.ToString())));
-
-        var factory = _factory.WithWebHostBuilder(builder =>
-            builder.ConfigureAppConfiguration((_, configuration) => configuration.AddInMemoryCollection(settings)));
-        _disposables.Add(factory);
-
-        return factory.CreateClient();
-    }
+        => _factory.CreateClient(boardSize, shipLengths);
 
     private static IEnumerable<(int Column, int Row)> DiagonalOf(int boardSize)
         => Enumerable.Range(0, boardSize).Select(i => (i, i));
@@ -297,49 +271,10 @@ public class GameEndpointsTests : IDisposable
         throw new InvalidOperationException($"No shot with hit={hit} found on the searched cells.");
     }
 
-    private static async Task<Guid> CreateGame(HttpClient client)
-    {
-        var response = await client.PostAsync("/games", null, Ct);
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
-
-        return (await ReadJson(response)).GetProperty("id").GetGuid();
-    }
-
-    private static async Task<JsonElement> GetGameJson(HttpClient client, Guid gameId)
-    {
-        var response = await client.GetAsync($"/games/{gameId}", Ct);
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        return await ReadJson(response);
-    }
-
-    private static Task<HttpResponseMessage> Shoot(HttpClient client, Guid gameId, int column, int row)
-        => client.PostAsJsonAsync($"/games/{gameId}/shots", new { column, row }, Ct);
-
-    private static int FieldAt(JsonElement game, int column, int row)
-        => game.GetProperty("board").GetProperty("boardRows")[row].GetProperty("row")[column].GetInt32();
-
-    private static async Task<JsonElement> ReadJson(HttpResponseMessage response)
-        => await response.Content.ReadFromJsonAsync<JsonElement>(Ct);
-
     public void Dispose()
     {
         _client.Dispose();
-        foreach (var disposable in _disposables)
-        {
-            disposable.Dispose();
-        }
         _factory.Dispose();
-        SqliteClearPools();
-        foreach (var file in new[] { _databasePath, _databasePath + "-shm", _databasePath + "-wal" })
-        {
-            if (File.Exists(file))
-            {
-                File.Delete(file);
-            }
-        }
         GC.SuppressFinalize(this);
     }
-
-    private static void SqliteClearPools() => Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
 }

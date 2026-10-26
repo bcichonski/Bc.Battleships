@@ -33,13 +33,26 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Ships
 
         public ShootResult Hit(Coordinates coordinates)
         {
-            if(GetCompartmentAt(coordinates)?.Hit() != null)
+            var compartment = GetCompartmentAt(coordinates);
+
+            if (compartment is null)
             {
-                return ShootResult.Hit;
+                return ShootResult.Miss;
             }
 
-            return ShootResult.Miss;
+            if (!compartment.Hit())
+            {
+                return ShootResult.AlreadyShot;
+            }
+
+            return CurrentHitPoints.Value == 0 ? ShootResult.Sunk : ShootResult.Hit;
         }
+
+        public bool Occupies(Coordinates coordinates)
+            => GetCompartmentAt(coordinates) is not null;
+
+        public bool IsFloodedAt(Coordinates coordinates)
+            => GetCompartmentAt(coordinates)?.State == ShipCompartmentState.Flooded;
 
         public bool IntersectsWith(Ship ship)
             => Compartments

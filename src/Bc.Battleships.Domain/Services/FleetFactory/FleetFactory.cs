@@ -2,18 +2,18 @@ using Bc.Battleships.Domain.AggregateRoots.Games.Ships;
 using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Domain.ValueObjects.Enums;
 using Bc.Battleships.Domain.ValueObjects.GameContext;
-using Bc.Battleships.Domain.Extensions;
 
 namespace Bc.Battleships.Domain.Services.FleetFactory
 {
     internal class FleetFactory
     {
-        private readonly Random _random = new Random();
+        private readonly Random _random;
         private readonly GameContext _gameContext;
 
-        public FleetFactory(GameContext gameContext)
+        public FleetFactory(GameContext gameContext, Random? random = null)
         {
             _gameContext = gameContext;
+            _random = random ?? Random.Shared;
         }
 
         public IEnumerable<Ship> BuildAndPositionShips()
@@ -30,45 +30,38 @@ namespace Bc.Battleships.Domain.Services.FleetFactory
 
         private Ship BuildAndPositionShip(ShipBlueprint shipBlueprint, List<Ship> createdShips)
         {
-            const int maxRandomAttempts = 10;
-            int currentAttempt = 1;
+            var candidates = new List<Ship>();
+            var boardSize = _gameContext.BoardSize.Value;
+            var length = shipBlueprint.Length.Value;
 
-            while (currentAttempt < maxRandomAttempts)
+            foreach (var layout in Enum.GetValues<ShipLayout>())
             {
+                var maxColumn = layout == ShipLayout.Horizontal ? boardSize - length + 1 : boardSize;
+                var maxRow = layout == ShipLayout.Vertical ? boardSize - length + 1 : boardSize;
 
-                var ship = BuildAndPositionShipRandomly(shipBlueprint);
-
-                if (IsNotCollidingWith(ship, createdShips))
+                for (var column = 1; column <= maxColumn; column++)
                 {
-                    return ship;
-                }
+                    for (var row = 1; row <= maxRow; row++)
+                    {
+                        var ship = new Ship(new Coordinates(column, row), layout, shipBlueprint.Length);
 
-                currentAttempt++;
+                        if (IsNotCollidingWith(ship, createdShips))
+                        {
+                            candidates.Add(ship);
+                        }
+                    }
+                }
             }
 
-            throw new FleetFactoryPositioningFailedException();
-        }
-
-        private bool IsNotCollidingWith(Ship ship, List<Ship> createdShips)
-            => createdShips.All(x => !x.IntersectsWith(ship));
-
-        private Ship BuildAndPositionShipRandomly(ShipBlueprint shipBlueprint)
-        {
-            var randomLayout = GetRandomLayout();
-            var randomCoordinates = GetRandomCoordinates(randomLayout, shipBlueprint);
-
-            return new Ship(randomCoordinates, randomLayout, shipBlueprint.Length);
-        }
-
-        private ShipLayout GetRandomLayout()
-            => EnumExtensions.GetRandomValue<ShipLayout>(_random);
-
-        private Coordinates GetRandomCoordinates(ShipLayout shipLayout, ShipBlueprint shipBlueprint)
-            => shipLayout switch
+            if (candidates.Count == 0)
             {
-                ShipLayout.Horizontal => new Coordinates(_random.Next(1, _gameContext.BoardSize.Value - shipBlueprint.Length.Value), _random.Next(1, _gameContext.BoardSize.Value)),
-                ShipLayout.Vertical => new Coordinates(_random.Next(1, _gameContext.BoardSize.Value), _random.Next(1, _gameContext.BoardSize.Value - shipBlueprint.Length.Value)),
-                _ => throw new FleetFactoryException()
-            };
+                throw new FleetFactoryPositioningFailedException();
+            }
+
+            return candidates[_random.Next(candidates.Count)];
+        }
+
+        private static bool IsNotCollidingWith(Ship ship, List<Ship> createdShips)
+            => createdShips.All(x => !x.IntersectsWith(ship));
     }
 }

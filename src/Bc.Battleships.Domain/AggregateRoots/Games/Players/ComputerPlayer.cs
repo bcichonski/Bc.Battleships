@@ -28,7 +28,7 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
         internal ComputerPlayer() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-        public void PositionShips(GameContext gameContext)
+        public void PositionShips(GameContext gameContext, Random? random = null)
         {
             if (Ships is not null)
             {
@@ -37,27 +37,26 @@ namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
 
             ArgumentNullException.ThrowIfNull(gameContext);
 
-            var fleetFactory = new FleetFactory(gameContext);
+            var fleetFactory = new FleetFactory(gameContext, random);
 
             Ships = fleetFactory.BuildAndPositionShips().ToList();
         }
 
         public ShootResult IncomingShot(Coordinates coordinates)
         {
-            if(CoordinatesShoot.All(x => x.Coordinates != coordinates))
+            if (CoordinatesShoot.Any(x => x.Coordinates == coordinates))
             {
-                CoordinatesShoot.Add(new ShotCoordinates(coordinates));
+                return ShootResult.AlreadyShot;
             }
 
-            foreach(var ship in Ships!)
-            {
-                if(ship.Hit(coordinates) == ShootResult.Hit)
-                {
-                    return ShootResult.Hit;
-                }
-            }
+            CoordinatesShoot.Add(new ShotCoordinates(coordinates));
 
-            return ShootResult.Miss;
+            var targetShip = Ships!.FirstOrDefault(x => x.Occupies(coordinates));
+
+            return targetShip?.Hit(coordinates) ?? ShootResult.Miss;
         }
+
+        public bool IsFloodedAt(Coordinates coordinates)
+            => Ships?.Any(x => x.IsFloodedAt(coordinates)) ?? false;
     }
 }

@@ -45,5 +45,43 @@ namespace Bc.Battleships.Tests.Integration.API.Games
                 result.CurrentHitPoints.Should().Be(currentHitPoints);
             });
         }
+
+        [Fact]
+        public async Task ShouldReturnHitWithUnchangedHitPointsWhenHitCellIsShotAgain()
+        {
+            var game = await AssumeGameInDb();
+            var expectedHitPoints = game.ComputerPlayer.CurrentHitPoints.Value - 1;
+            var shootCommand = new ShootCommand(1, 0);
+
+            await InScope(async testContext =>
+                await testContext.Mediator.Send(shootCommand, CancellationToken.None));
+
+            await InScope(async testContext =>
+            {
+                var result = await testContext.Mediator.Send(shootCommand, CancellationToken.None);
+
+                result.Hit.Should().BeTrue();
+                result.CurrentHitPoints.Should().Be(expectedHitPoints);
+            });
+        }
+
+        [Fact]
+        public async Task ShouldReturnMissWithUnchangedHitPointsWhenWaterIsShotAgain()
+        {
+            var game = await AssumeGameInDb();
+            var currentHitPoints = game.ComputerPlayer.CurrentHitPoints.Value;
+            var shootCommand = new ShootCommand(3, 3);
+
+            await InScope(async testContext =>
+                await testContext.Mediator.Send(shootCommand, CancellationToken.None));
+
+            await InScope(async testContext =>
+            {
+                var result = await testContext.Mediator.Send(shootCommand, CancellationToken.None);
+
+                result.Hit.Should().BeFalse();
+                result.CurrentHitPoints.Should().Be(currentHitPoints);
+            });
+        }
     }
 }

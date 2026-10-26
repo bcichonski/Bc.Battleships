@@ -1,8 +1,7 @@
-namespace Bc.Battleships.Domain.ValueObjects.Enums
+namespace Bc.Battleships.Domain.ValueObjects.Enums;
+
+public enum ShipCompartmentState
 {
-    public enum ShipCompartmentState
-    {
-        Dry = 0,
-        Flooded
-    }
+    Dry = 0,
+    Flooded
 }

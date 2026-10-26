@@ -49,10 +49,10 @@ Lets one aggregate tell others that something happened (e.g. a future `GameWon` 
 Decided in #25. The original static `DomainEventBus.Instance` (service locator via `IHttpContextAccessor`, fire-and-forget, handler reusing the scoped DbContext mid-save) was removed. The event abstractions were deliberately **kept** at the owner's request even though nothing publishes an event today, so the next story that needs one doesn't re-introduce them ad hoc.
 
 ### Usage
-- Event types implement `IDomainEvent` (Domain, `Events/`), which extends `IEvent` (Messages, a Mediator `INotification`).
-- Publish through `IDomainEventBus`, injected (scoped; registered in `Server/Infrastructure/Services.cs` with `IBus` → `Bus` → Mediator) and **awaited**. Never through a static.
+- Event types implement `IDomainEvent` (Domain, `Events/`), which extends `IEvent` (Domain, `Events/`, a Mediator `INotification`).
+- Publish through `IDomainEventBus`, injected (scoped; registered in `Application/Infrastructure/Services.cs` with `IBus` → `Bus` → Mediator) and **awaited**. Never through a static.
 - Publish from the application layer (command handler) **after** the aggregate change is saved, not from inside entities. Entities don't hold references back to their owners for event purposes.
-- Handlers may live in Domain or Server; Mediator's source generator scans both (plus Messages).
+- Handlers may live in Domain or Application; Mediator's source generator runs in Application and scans both.
 - Rules *inside* one aggregate (e.g. game-over when the fleet's HP hits 0) are enforced synchronously by the aggregate root, never via an event.
 
 ### Trade-offs

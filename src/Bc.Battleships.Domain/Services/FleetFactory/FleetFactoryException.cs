@@ -1,8 +1,7 @@
 using Bc.Battleships.Domain.Exceptions;
 
-namespace Bc.Battleships.Domain.Services.FleetFactory
+namespace Bc.Battleships.Domain.Services.FleetFactory;
+
+class FleetFactoryException : DomainException
 {
-    class FleetFactoryException : DomainException
-    {
-    }
 }

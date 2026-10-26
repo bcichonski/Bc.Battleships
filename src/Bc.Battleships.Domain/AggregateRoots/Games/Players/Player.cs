@@ -1,19 +1,18 @@
 using Bc.Battleships.Domain.ValueObjects;
 
-namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
+namespace Bc.Battleships.Domain.AggregateRoots.Games.Players;
+
+public abstract class Player
 {
-    public abstract class Player
+    public PlayerId Id { get; set; }
+
+    public Player()
     {
-        public PlayerId Id { get; set; }
+        Id = PlayerId.New();
+    }
 
-        public Player()
-        {
-            Id = new PlayerId();
-        }
-
-        internal Player(PlayerId id)
-        {
-            Id = id;
-        }
+    internal Player(PlayerId id)
+    {
+        Id = id;
     }
 }

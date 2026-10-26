@@ -1,38 +1,41 @@
 import type { GameDto, ShootCommand, ShootResult } from '../logic/types'
 
-const GAME_PATH = '/game'
+const GAMES_PATH = '/games'
 
 export class ApiError extends Error {
   readonly status: number
 
-  constructor(method: string, status: number) {
-    super(`${method} ${GAME_PATH} failed with status ${status}`)
+  constructor(method: string, path: string, status: number) {
+    super(`${method} ${path} failed with status ${status}`)
     this.name = 'ApiError'
     this.status = status
   }
 }
 
-const ensureOk = (method: string, response: Response) => {
-  if (!response.ok) throw new ApiError(method, response.status)
+const ensureOk = (method: string, path: string, response: Response) => {
+  if (!response.ok) throw new ApiError(method, path, response.status)
 }
 
-export async function getGame(): Promise<GameDto> {
-  const response = await fetch(GAME_PATH)
-  ensureOk('GET', response)
+export async function createGame(): Promise<GameDto> {
+  const response = await fetch(GAMES_PATH, { method: 'POST' })
+  ensureOk('POST', GAMES_PATH, response)
   return (await response.json()) as GameDto
 }
 
-export async function createGame(): Promise<void> {
-  const response = await fetch(GAME_PATH, { method: 'POST' })
-  ensureOk('POST', response)
+export async function getGame(id: string): Promise<GameDto> {
+  const path = `${GAMES_PATH}/${id}`
+  const response = await fetch(path)
+  ensureOk('GET', path, response)
+  return (await response.json()) as GameDto
 }
 
-export async function shoot(command: ShootCommand): Promise<ShootResult> {
-  const response = await fetch(GAME_PATH, {
-    method: 'PUT',
+export async function shoot(id: string, command: ShootCommand): Promise<ShootResult> {
+  const path = `${GAMES_PATH}/${id}/shots`
+  const response = await fetch(path, {
+    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(command),
   })
-  ensureOk('PUT', response)
+  ensureOk('POST', path, response)
   return (await response.json()) as ShootResult
 }

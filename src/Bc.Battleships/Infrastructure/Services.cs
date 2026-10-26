@@ -1,32 +1,36 @@
-using Bc.Battleships.Persistence.Infrastructure;
-using Bc.Battleships.Persistence.Providers;
-using HandlersServices = Bc.Battleships.Server.Infrastructure.Services;
-using PersistenceServices = Bc.Battleships.Persistence.Infrastructure.Services;
+using Bc.Battleships.Application.Options;
+using Bc.Battleships.Infrastructure.Infrastructure;
+using Bc.Battleships.Infrastructure.Providers;
+using HandlersServices = Bc.Battleships.Application.Infrastructure.Services;
+using PersistenceServices = Bc.Battleships.Infrastructure.Infrastructure.Services;
 
-namespace Bc.Battleships.Infrastructure
+namespace Bc.Battleships.Infrastructure;
+
+public static class Services
 {
-    public static class Services
+    public static void Configure(IServiceCollection serviceCollection)
     {
-        public static void Configure(IServiceCollection serviceCollection)
-        {
-            serviceCollection.AddSingleton<IPersistenceConfigurationProvider, ConfigurationProvider>();
-            PersistenceServices.Configure(serviceCollection);
-            HandlersServices.Configure(serviceCollection);
+        serviceCollection.AddSingleton<IPersistenceConfigurationProvider, ConfigurationProvider>();
+        PersistenceServices.Configure(serviceCollection);
+        HandlersServices.Configure(serviceCollection);
 
-            serviceCollection.AddOpenApi(options =>
-                options.AddDocumentTransformer((document, _, _) =>
-                {
-                    document.Info.Title = "Battleships API";
-                    return Task.CompletedTask;
-                }));
-        }
+        serviceCollection.AddOptions<GameOptions>()
+            .BindConfiguration(GameOptions.SectionName)
+            .ValidateOnStart();
 
-        public static async Task InitializeAsync(IServiceProvider serviceProvider)
-        {
-            using (var scope = serviceProvider.CreateAsyncScope())
+        serviceCollection.AddOpenApi(options =>
+            options.AddDocumentTransformer((document, _, _) =>
             {
-                await scope.ServiceProvider.GetRequiredService<DatabaseMigrator>().ApplyMigrationsIfNeeded();
-            }
+                document.Info.Title = "Battleships API";
+                return Task.CompletedTask;
+            }));
+    }
+
+    public static async Task InitializeAsync(IServiceProvider serviceProvider)
+    {
+        using (var scope = serviceProvider.CreateAsyncScope())
+        {
+            await scope.ServiceProvider.GetRequiredService<DatabaseMigrator>().ApplyMigrationsIfNeeded();
         }
     }
 }

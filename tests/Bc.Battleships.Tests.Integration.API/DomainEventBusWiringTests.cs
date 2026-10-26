@@ -5,25 +5,24 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Bc.Battleships.Tests.Integration.API
+namespace Bc.Battleships.Tests.Integration.API;
+
+public class DomainEventBusWiringTests : ApiIntegrationTestBase
 {
-    public class DomainEventBusWiringTests : ApiIntegrationTestBase
+    [Fact]
+    public async Task ShouldResolveScopedDomainEventBusAndPublishThroughMediator()
     {
-        [Fact]
-        public async Task ShouldResolveScopedDomainEventBusAndPublishThroughMediator()
+        await InScope(async testContext =>
         {
-            await InScope(async testContext =>
-            {
-                var domainEventBus = testContext.Services.GetRequiredService<IDomainEventBus>();
+            var domainEventBus = testContext.Services.GetRequiredService<IDomainEventBus>();
 
-                Func<Task> publish = () => domainEventBus.Publish(new UnhandledDomainEvent());
+            Func<Task> publish = () => domainEventBus.Publish(new UnhandledDomainEvent());
 
-                await publish.Should().NotThrowAsync();
-            });
-        }
+            await publish.Should().NotThrowAsync();
+        });
+    }
 
-        private sealed class UnhandledDomainEvent : IDomainEvent
-        {
-        }
+    private sealed class UnhandledDomainEvent : IDomainEvent
+    {
     }
 }

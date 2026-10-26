@@ -1,6 +1,5 @@
-namespace Bc.Battleships.Domain.Exceptions
+namespace Bc.Battleships.Domain.Exceptions;
+
+public class DomainException : Exception
 {
-    public class DomainException : Exception
-    {
-    }
 }

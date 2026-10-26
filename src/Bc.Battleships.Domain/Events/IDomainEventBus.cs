@@ -1,7 +1,6 @@
-namespace Bc.Battleships.Domain.Events
+namespace Bc.Battleships.Domain.Events;
+
+public interface IDomainEventBus
 {
-    public interface IDomainEventBus
-    {
-        Task Publish(IDomainEvent domainEvent);
-    }
+    Task Publish(IDomainEvent domainEvent);
 }

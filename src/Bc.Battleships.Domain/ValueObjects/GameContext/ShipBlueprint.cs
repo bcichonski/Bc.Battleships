@@ -1,6 +1,5 @@
-namespace Bc.Battleships.Domain.ValueObjects.GameContext
+namespace Bc.Battleships.Domain.ValueObjects.GameContext;
+
+public record ShipBlueprint(Length Length)
 {
-    public record ShipBlueprint(Length Length)
-    {
-    }
 }

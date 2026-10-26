@@ -30,8 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bc.Battleships.Persistence\Bc.Battleships.Persistence.csproj" />
-    <ProjectReference Include="..\Bc.Battleships.Server\Bc.Battleships.Server.csproj" />
+    <ProjectReference Include="..\Bc.Battleships.Infrastructure\Bc.Battleships.Infrastructure.csproj" />
+    <ProjectReference Include="..\Bc.Battleships.Application\Bc.Battleships.Application.csproj" />
   </ItemGroup>
 
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">

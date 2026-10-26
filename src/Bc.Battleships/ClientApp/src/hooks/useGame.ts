@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { createGame, getGame, shoot as shootApi } from '../api/gameApi'
+import { ApiError, createGame, getGame, shoot as shootApi } from '../api/gameApi'
 import { applyShot } from '../logic/logic'
 import type { GameDto } from '../logic/types'
 
@@ -9,9 +9,26 @@ interface State {
   loading: boolean
   error: string | null
   game: GameDto | null
-  // true once a board has been loaded in this session, i.e. a game existed
-  hadBoard: boolean
   startingNewGame: boolean
+}
+
+export const GAME_ID_KEY = 'battleships.gameId'
+
+const readStoredGameId = (): string | null => {
+  try {
+    return localStorage.getItem(GAME_ID_KEY)
+  } catch {
+    return null
+  }
+}
+
+const storeGameId = (id: string | null) => {
+  try {
+    if (id === null) localStorage.removeItem(GAME_ID_KEY)
+    else localStorage.setItem(GAME_ID_KEY, id)
+  } catch {
+    // storage unavailable: the game just will not survive a reload
+  }
 }
 
 const toMessage = (error: unknown) => (error instanceof Error ? error.message : String(error))
@@ -21,36 +38,45 @@ const withGame = (current: State, game: GameDto): State => ({
   loading: false,
   error: null,
   game,
-  hadBoard: current.hadBoard || game.board !== null,
 })
 
-export const selectView = (state: Pick<State, 'loading' | 'error' | 'game' | 'hadBoard'>): GameView => {
+export const selectView = (state: Pick<State, 'loading' | 'error' | 'game'>): GameView => {
   if (state.loading) return 'loading'
   if (state.error !== null) return 'error'
   const game = state.game
-  if (game && state.hadBoard && game.currentHitPoints <= 0) return 'win'
+  if (game && game.board && game.currentHitPoints <= 0) return 'win'
   if (game && game.isGameActive && game.board) return 'active'
   return 'none'
 }
 
 export function useGame() {
+  const [initialId] = useState(readStoredGameId)
+  const gameIdRef = useRef<string | null>(initialId)
   const [state, setState] = useState<State>({
-    loading: true,
+    loading: initialId !== null,
     error: null,
     game: null,
-    hadBoard: false,
     startingNewGame: false,
   })
   const startingRef = useRef(false)
 
   useEffect(() => {
+    const id = gameIdRef.current
+    if (id === null) return
     let cancelled = false
-    getGame().then(
+    getGame(id).then(
       (game) => {
         if (!cancelled) setState((current) => withGame(current, game))
       },
       (error: unknown) => {
-        if (!cancelled) setState((current) => ({ ...current, loading: false, error: toMessage(error) }))
+        if (cancelled) return
+        if (error instanceof ApiError && error.status === 404) {
+          gameIdRef.current = null
+          storeGameId(null)
+          setState((current) => ({ ...current, loading: false, error: null, game: null }))
+          return
+        }
+        setState((current) => ({ ...current, loading: false, error: toMessage(error) }))
       },
     )
     return () => {
@@ -63,8 +89,9 @@ export function useGame() {
     startingRef.current = true
     setState((current) => ({ ...current, startingNewGame: true }))
     try {
-      await createGame()
-      const game = await getGame()
+      const game = await createGame()
+      gameIdRef.current = game.id
+      storeGameId(game.id)
       setState((current) => ({ ...withGame(current, game), startingNewGame: false }))
     } catch (error) {
       setState((current) => ({ ...current, loading: false, error: toMessage(error), startingNewGame: false }))
@@ -74,8 +101,10 @@ export function useGame() {
   }, [])
 
   const shoot = useCallback(async (column: number, row: number) => {
+    const id = gameIdRef.current
+    if (id === null) return
     try {
-      const result = await shootApi({ column, row })
+      const result = await shootApi(id, { column, row })
       setState((current) =>
         current.game ? { ...current, error: null, game: applyShot(current.game, column, row, result) } : current,
       )

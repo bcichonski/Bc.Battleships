@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Bc.Battleships.Domain\Bc.Battleships.Domain.csproj" />
-    <ProjectReference Include="..\..\src\Bc.Battleships.Persistence\Bc.Battleships.Persistence.csproj" />
+    <ProjectReference Include="..\..\src\Bc.Battleships.Infrastructure\Bc.Battleships.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

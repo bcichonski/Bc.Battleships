@@ -85,15 +85,15 @@ Regenerate the EF migration only if the model changes; the 2022 migration still 
 
 ### Design
 
-- **There is one global "current game".** The API has no game id, so two browsers share and fight over one game. Introduce resources: `POST /games` → id, `GET /games/{id}`, `POST /games/{id}/shots`. `PUT /game` for shooting is not REST-y anyway.
-- **Testability:** inject `Random`/seed (or a `TimeProvider`-style abstraction) into fleet placement; replace the static `GameContextProvider` with options.
+- [x] **There is one global "current game" (done in #26).** The API has no game id, so two browsers share and fight over one game. Introduce resources: `POST /games` → id, `GET /games/{id}`, `POST /games/{id}/shots`. `PUT /game` for shooting is not REST-y anyway.
+- [x] **Testability (done in #26).** Inject `Random`/seed (or a `TimeProvider`-style abstraction) into fleet placement; replace the static `GameContextProvider` with options.
 - [x] **Remove the back-references (done in #25)** `Ship.Owner` and `ComputerPlayer.Game`. They exist only for the event plumbing in (2), and removing them simplifies the EF mapping a lot.
-- **Remove the `#pragma warning disable CS8618/CS8601` blocks.** Use EF constructor binding or `= null!` on private ctors.
-- `ShootCommandHandler` depends on `BattleshipsDbContext` directly → the repository/unit of work should own `SaveChanges`.
-- `HumanPlayer` is created and then ignored by EF. Either delete it, or implement the computer shooting back (feature, Phase 5).
-- **Too many projects for ~1k LoC:** Messages + Server → `Application`; `EFMigrationsHelper` → an `IDesignTimeDbContextFactory` inside Persistence. Target: `Domain`, `Application`, `Infrastructure`, `Api` (+ `web/`).
-- Strongly-typed ids: 6 near-identical `ValueConverter` classes → one generic convention in `ConfigureConventions`, or Vogen.
-- Modern C#: file-scoped namespaces, primary constructors, records for value objects, collection expressions.
+- [x] **Remove the `#pragma warning disable CS8618/CS8601` blocks (done in #26).** Use EF constructor binding or `= null!` on private ctors.
+- [x] **Unit of work (done in #26).** `ShootCommandHandler` depended on `BattleshipsDbContext` directly → the repository/unit of work should own `SaveChanges`.
+- [x] **`HumanPlayer` (done in #26): kept, no behaviour added.** It was created and then ignored by EF. Either delete it, or implement the computer shooting back (feature, Phase 5).
+- [x] **Too many projects for ~1k LoC (done in #26).** Messages + Server → `Application`; `EFMigrationsHelper` → an `IDesignTimeDbContextFactory` inside Persistence. Target: `Domain`, `Application`, `Infrastructure`, `Api` (+ `web/`). **Deviation (D3):** the web project keeps the name `Bc.Battleships` and plays the Api role, and `ClientApp` stays inside it; renaming it and the `web/` move are a separate step. Persistence was renamed `Bc.Battleships.Infrastructure` and `EFMigrationsHelper` replaced by `BattleshipsDbContextFactory`.
+- [x] **Strongly-typed ids (done in #26).** 6 near-identical `ValueConverter` classes → one generic convention in `ConfigureConventions`, or Vogen.
+- [x] **Modern C# (done in #26).** File-scoped namespaces, primary constructors, records for value objects, collection expressions.
 
 ### Tests
 

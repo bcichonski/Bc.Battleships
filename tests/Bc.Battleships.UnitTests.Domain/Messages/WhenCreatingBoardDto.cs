@@ -1,32 +1,31 @@
 using System;
 using AwesomeAssertions;
 using System.Linq;
-using Bc.Battleships.Messages.DTOs;
+using Bc.Battleships.Application.DTOs;
 using Xunit;
 
-namespace Bc.Battleships.UnitTests.Domain.Messages
+namespace Bc.Battleships.UnitTests.Domain.Messages;
+
+public class WhenCreatingBoardDto
 {
-    public class WhenCreatingBoardDto
+    private static BoardRowDto[] Rows(int count)
+        => Enumerable.Range(0, count).Select(_ => new BoardRowDto([])).ToArray();
+
+    [Fact]
+    public void ShouldAcceptMatchingRowCount()
     {
-        private static BoardRowDto[] Rows(int count)
-            => Enumerable.Range(0, count).Select(_ => new BoardRowDto([])).ToArray();
+        var dto = new BoardDto(3, Rows(3));
 
-        [Fact]
-        public void ShouldAcceptMatchingRowCount()
-        {
-            var dto = new BoardDto(3, Rows(3));
+        dto.BoardSize.Should().Be(3);
+    }
 
-            dto.BoardSize.Should().Be(3);
-        }
+    [Theory]
+    [InlineData(2)]
+    [InlineData(4)]
+    public void ShouldThrowArgumentExceptionWhenRowCountDiffersFromBoardSize(int rows)
+    {
+        var act = () => new BoardDto(3, Rows(rows));
 
-        [Theory]
-        [InlineData(2)]
-        [InlineData(4)]
-        public void ShouldThrowArgumentExceptionWhenRowCountDiffersFromBoardSize(int rows)
-        {
-            var act = () => new BoardDto(3, Rows(rows));
-
-            act.Should().Throw<ArgumentException>();
-        }
+        act.Should().Throw<ArgumentException>();
     }
 }

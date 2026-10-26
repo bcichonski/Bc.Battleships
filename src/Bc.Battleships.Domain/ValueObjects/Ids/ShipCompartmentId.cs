@@ -1,17 +1,6 @@
-namespace Bc.Battleships.Domain.ValueObjects
+namespace Bc.Battleships.Domain.ValueObjects;
+
+public readonly record struct ShipCompartmentId(Guid Value) : IGuidId
 {
-    public struct ShipCompartmentId
-    {
-        public Guid Value { get; set; }
-
-        public ShipCompartmentId()
-        {
-            Value = Guid.NewGuid();
-        }
-
-        public ShipCompartmentId(Guid value)
-        {
-            Value = value;
-        }
-    }
+    public static ShipCompartmentId New() => new(Guid.NewGuid());
 }

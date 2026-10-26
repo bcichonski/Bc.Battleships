@@ -2,23 +2,22 @@ using Bc.Battleships.Domain.AggregateRoots.Games.Ships;
 using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Domain.ValueObjects.Enums;
 
-namespace Bc.Battleships.Domain.Services
+namespace Bc.Battleships.Domain.Services;
+
+static class ShipCompartmentsProvider
 {
-    static class ShipCompartmentsProvider
+    public static IEnumerable<ShipCompartment> GetCompartments(Ship ship)
     {
-        public static IEnumerable<ShipCompartment> GetCompartments(Ship ship)
-        {
-            var constantDimensionValue = ship.Layout == ShipLayout.Horizontal ? ship.Coordinates.Row : ship.Coordinates.Column;
-            var varyingDimensionValue = ship.Layout == ShipLayout.Horizontal ? ship.Coordinates.Column : ship.Coordinates.Row;
+        var constantDimensionValue = ship.Layout == ShipLayout.Horizontal ? ship.Coordinates.Row : ship.Coordinates.Column;
+        var varyingDimensionValue = ship.Layout == ShipLayout.Horizontal ? ship.Coordinates.Column : ship.Coordinates.Row;
 
-            var varyingDimensionValues = Enumerable.Range(varyingDimensionValue, ship.Length.Value);
+        var varyingDimensionValues = Enumerable.Range(varyingDimensionValue, ship.Length.Value);
 
-            return varyingDimensionValues.Select(x => CreateCompartment(constantDimensionValue, x, ship.Layout));
-        }
-
-        private static ShipCompartment CreateCompartment(int constantDimensionValue, int varyingDimensionValue, ShipLayout layout)
-            => layout == ShipLayout.Horizontal 
-                ? new ShipCompartment(new Coordinates(varyingDimensionValue, constantDimensionValue))
-                : new ShipCompartment(new Coordinates(constantDimensionValue, varyingDimensionValue));
+        return varyingDimensionValues.Select(x => CreateCompartment(constantDimensionValue, x, ship.Layout));
     }
+
+    private static ShipCompartment CreateCompartment(int constantDimensionValue, int varyingDimensionValue, ShipLayout layout)
+        => layout == ShipLayout.Horizontal 
+            ? new ShipCompartment(new Coordinates(varyingDimensionValue, constantDimensionValue))
+            : new ShipCompartment(new Coordinates(constantDimensionValue, varyingDimensionValue));
 }

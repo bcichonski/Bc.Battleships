@@ -8,7 +8,7 @@ const hitPoints = async (text: string | null) => Number(/(\d+)/.exec(text ?? '')
 test('plays a full game until "You win!"', async ({ page }) => {
   await page.goto('/')
 
-  await page.getByRole('button', { name: 'Start new game' }).click()
+  await page.getByRole('navigation').getByRole('button', { name: 'Start new game' }).click()
   const status = page.getByText(/Left to hit:/)
   await expect(status).toBeVisible()
   const initialHp = await hitPoints(await status.textContent())
@@ -38,4 +38,34 @@ test('plays a full game until "You win!"', async ({ page }) => {
 
   await expect(win).toBeVisible()
   expect(shots).toBeLessThanOrEqual(100)
+})
+
+test('reload mid-game resumes the same game', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('navigation').getByRole('button', { name: 'Start new game' }).click()
+  const status = page.getByText(/Left to hit:/)
+  await expect(status).toBeVisible()
+  const initialHp = await hitPoints(await status.textContent())
+
+  // Shoot until a hit lowers the hit points, so a reload that started a fresh game would be noticed.
+  let shot = ''
+  for (const row of ROWS) {
+    for (let column = 1; column <= COLUMNS; column++) {
+      const cell = page.getByRole('button', { name: `${row}${column}`, exact: true })
+      await cell.click()
+      await expect(cell).toHaveText(/[●○]/)
+      if ((await cell.textContent()) === '●') {
+        shot = `${row}${column}`
+        break
+      }
+    }
+    if (shot) break
+  }
+  expect(shot).not.toBe('')
+  await expect(status).toHaveText(`Left to hit: ${initialHp - 1}`)
+
+  await page.reload()
+
+  await expect(page.getByText(/Left to hit:/)).toHaveText(`Left to hit: ${initialHp - 1}`)
+  await expect(page.getByRole('button', { name: shot, exact: true })).toHaveText('●')
 })

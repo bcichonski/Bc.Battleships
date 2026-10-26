@@ -1,34 +1,51 @@
 using AwesomeAssertions;
-using Bc.Battleships.Messages.Commands;
+using Bc.Battleships.Application.Commands;
+using Bc.Battleships.Domain.ValueObjects;
+using Bc.Battleships.Domain.ValueObjects.Enums;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Bc.Battleships.Tests.Integration.API.Games
+namespace Bc.Battleships.Tests.Integration.API.Games;
+
+public class WhenCreatingNewGame : ApiIntegrationTestBase
 {
-    public class WhenCreatingNewGame : ApiIntegrationTestBase
+    [Fact]
+    public async Task ShouldCreateAndPersistAnActiveGame()
     {
-        [Fact]
-        public async Task ShouldCreateOne()
+        Application.DTOs.GameDto? created = null;
+
+        await InScope(async testContext =>
+            created = await testContext.Mediator.Send(new CreateNewGameCommand(), CancellationToken.None));
+
+        created.Should().NotBeNull();
+        var game = created!;
+        game.IsGameActive.Should().BeTrue();
+        game.Board.BoardSize.Should().Be(10);
+
+        await InScope(async testContext =>
         {
-            var game = await AssumeGameInDb();
+            var stored = await testContext.GamesRepository.GetById(new GameId(game.Id), CancellationToken.None);
 
-            await InScope(async testContext =>
-            {
-                await testContext.Mediator.Send(new CreateNewGameCommand(), CancellationToken.None);
-            });
+            stored.Should().NotBeNull();
+            stored!.GameState.Should().Be(GameState.Active);
+        });
+    }
 
-            await InScope(async testContext =>
-            {
-                var oldGame = await testContext.GamesRepository.GetById(game.Id, CancellationToken.None);
-                var newGame = await testContext.GamesRepository.Get(CancellationToken.None);
+    [Fact]
+    public async Task ShouldNotChangeAnyOtherGame()
+    {
+        var existingGame = await AssumeGameInDb();
 
-                oldGame.Should().NotBeNull();
-                oldGame!.Id.Should().NotBe(newGame!.Id);
-                oldGame.GameState.Should().Be(Domain.ValueObjects.Enums.GameState.Ended);
+        await InScope(async testContext =>
+            await testContext.Mediator.Send(new CreateNewGameCommand(), CancellationToken.None));
 
-                newGame!.GameState.Should().NotBe(Domain.ValueObjects.Enums.GameState.Ended);
-            });
-        }
+        await InScope(async testContext =>
+        {
+            var oldGame = await testContext.GamesRepository.GetById(existingGame.Id, CancellationToken.None);
+
+            oldGame.Should().NotBeNull();
+            oldGame!.GameState.Should().Be(GameState.Active);
+        });
     }
 }

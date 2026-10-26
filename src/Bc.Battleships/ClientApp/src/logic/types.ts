@@ -10,6 +10,7 @@ export interface BoardDto {
 }
 
 export interface GameDto {
+  id: string
   isGameActive: boolean
   currentHitPoints: number
   board: BoardDto | null

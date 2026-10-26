@@ -25,7 +25,7 @@ export default defineConfig({
   webServer: [
     {
       command: `dotnet run --project ../Bc.Battleships.csproj --no-launch-profile --urls ${backendUrl}`,
-      // GET /game answers 404 when no game exists, so wait for the port instead of a URL.
+      // The API has no health URL, so wait for the port.
       port: 5191,
       reuseExistingServer: !process.env.CI,
       timeout: 180_000,

@@ -10,22 +10,23 @@ This is a 2022 proof of concept (originally .NET 6 + Create React App) that is b
 
 The solution is `Bc.Battleships.slnx` at the repository root. Production projects live under `src/` and test projects under `tests/`.
 
-* **Domain** (`src/Bc.Battleships.Domain`): the game model (`Game`, players, ships, shots) and its rules.
-* **Messages** (`src/Bc.Battleships.Messages`): the commands and queries exchanged with the API.
-* **Persistence** (`src/Bc.Battleships.Persistence`): EF Core with SQLite.
-* **Server** (`src/Bc.Battleships.Server`): command and query handlers, dispatched through Mediator (CQRS, source-generated).
-* **Web app** (`src/Bc.Battleships`): minimal API endpoints (`Infrastructure/GameEndpoints.cs`), the OpenAPI document and Scalar UI (Development only), and the React client in `ClientApp/`.
-* **EF migrations helper** (`src/Bc.Battleships.EFMigrationsHelper`): design-time support for EF Core migrations.
+* **Domain** (`src/Bc.Battleships.Domain`): the game model (`Game`, players, ships, shots), its rules, the repository and unit-of-work abstractions, and the domain-event abstractions.
+* **Application** (`src/Bc.Battleships.Application`): commands, queries, DTOs and their handlers, dispatched through Mediator (CQRS, source-generated).
+* **Infrastructure** (`src/Bc.Battleships.Infrastructure`): EF Core with SQLite, the repository and unit of work, the migrations and the design-time `DbContext` factory.
+* **Web app / API** (`src/Bc.Battleships`): minimal API endpoints (`Infrastructure/GameEndpoints.cs`), the composition root, the OpenAPI document and Scalar UI (Development only), and the React client in `ClientApp/`.
 
 ```mermaid
 graph LR
-    Web["Bc.Battleships (web app)"] --> Server["Bc.Battleships.Server"]
-    Web --> Persistence["Bc.Battleships.Persistence"]
-    Server --> Domain["Bc.Battleships.Domain"]
-    Server --> Persistence
-    Domain --> Messages["Bc.Battleships.Messages"]
-    Persistence --> Domain
-    Migrations["Bc.Battleships.EFMigrationsHelper"] --> Persistence
+    Web["Bc.Battleships (web app)"] --> Application["Bc.Battleships.Application"]
+    Web --> Infrastructure["Bc.Battleships.Infrastructure"]
+    Application --> Domain["Bc.Battleships.Domain"]
+    Infrastructure --> Domain
+```
+
+EF Core migrations are created and checked from the repository root. To verify that the model matches the last migration (no new migration is needed):
+
+```bash
+dotnet ef migrations has-pending-model-changes --project src/Bc.Battleships.Infrastructure --startup-project src/Bc.Battleships.Infrastructure
 ```
 
 Test projects (`tests/`):
@@ -61,7 +62,8 @@ npm ci
 npm run dev
 ```
 
-* `http://localhost:44463`: the Vite dev server (plain HTTP, `strictPort`). Open the game here. It forwards `/game` to the backend. The proxy target is the first URL in `ASPNETCORE_URLS` when that is set, and otherwise `http://localhost:5191` (the HTTP profile of the backend). To proxy to a different backend, start the client with that address, for example `ASPNETCORE_URLS=https://localhost:7191 npm run dev`. The proxy accepts self-signed certificates.
+* `http://localhost:44463`: the Vite dev server (plain HTTP, `strictPort`). Open the game here. It forwards `/games` to the backend. The proxy target is the first URL in `ASPNETCORE_URLS` when that is set, and otherwise `http://localhost:5191` (the HTTP profile of the backend). To proxy to a different backend, start the client with that address, for example `ASPNETCORE_URLS=https://localhost:7191 npm run dev`. The proxy accepts self-signed certificates.
+* API routes (each game has its own id, so several browsers can play at once): `POST /games` creates a game and returns `201` with the game and a `Location` header; `GET /games/{id}` returns the game state (`404` when unknown); `POST /games/{id}/shots` fires a shot and returns the result (`404` for an unknown game, `409` when the game is already over). The Scalar UI documents them.
 * `vite.config.ts` honours an optional `VITE_CACHE_DIR` environment variable. Only set it where `node_modules/.vite` is not writable.
 
 Other client scripts, from `src/Bc.Battleships/ClientApp`: `npm run build` (TypeScript typecheck, then the production bundle into `ClientApp/build`), `npm run preview` (serves that bundle locally) and `npm run lint`.
@@ -79,7 +81,7 @@ dotnet build
 dotnet test
 ```
 
-`dotnet test` runs 63 tests: 44 domain unit tests, 8 database integration tests and 11 API integration tests (5 of them are HTTP endpoint tests through `WebApplicationFactory`).
+`dotnet test` runs 115 tests: 77 domain unit tests, 11 database integration tests and 27 API integration tests (including the HTTP endpoint tests through `WebApplicationFactory`).
 
 Client, from `src/Bc.Battleships/ClientApp`:
 

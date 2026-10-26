@@ -1,8 +1,7 @@
-namespace Bc.Battleships.Domain.ValueObjects.Enums
+namespace Bc.Battleships.Domain.ValueObjects.Enums;
+
+public enum ShipLayout
 {
-    public enum ShipLayout
-    {
-        Horizontal = 0,
-        Vertical
-    }
+    Horizontal = 0,
+    Vertical
 }

@@ -15,7 +15,7 @@ export default defineConfig({
     port: 44463,
     strictPort: true,
     proxy: {
-      '/game': {
+      '/games': {
         target: apiTarget,
         secure: false,
       },

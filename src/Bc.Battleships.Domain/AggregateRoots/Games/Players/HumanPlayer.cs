@@ -1,6 +1,5 @@
-namespace Bc.Battleships.Domain.AggregateRoots.Games.Players
+namespace Bc.Battleships.Domain.AggregateRoots.Games.Players;
+
+public class HumanPlayer : Player
 {
-    public class HumanPlayer : Player
-    {
-    }
 }

@@ -1,62 +1,61 @@
-using Bc.Battleships.Persistence;
-using Bc.Battleships.Persistence.Infrastructure;
-using Bc.Battleships.Persistence.Providers;
+using Bc.Battleships.Infrastructure;
+using Bc.Battleships.Infrastructure.Infrastructure;
+using Bc.Battleships.Infrastructure.Providers;
 using Bc.Battleships.Tests.Common;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 
-namespace Bc.Battleships.Tests.Integration.Database
+namespace Bc.Battleships.Tests.Integration.Database;
+
+public class IntegrationTestBase : IDisposable
 {
-    public class IntegrationTestBase : IDisposable
+    protected IServiceProvider ServiceProvider { get; }
+
+    public IntegrationTestBase()
     {
-        protected IServiceProvider ServiceProvider { get; }
+        var services = new ServiceCollection();
 
-        public IntegrationTestBase()
-        {
-            var services = new ServiceCollection();
+        ConfigureServices(services);
 
-            ConfigureServices(services);
+        ServiceProvider = services.BuildServiceProvider();
 
-            ServiceProvider = services.BuildServiceProvider();
+        InitializeDatabase().Wait();
+    }
 
-            InitializeDatabase().Wait();
-        }
+    private Task InitializeDatabase()
+        => InScope(async dbc =>
+          {
+              await dbc!.Database.EnsureDeletedAsync();
+              await dbc!.Database.EnsureCreatedAsync();
+          });
 
-        private Task InitializeDatabase()
-            => InScope(async dbc =>
-              {
-                  await dbc!.Database.EnsureDeletedAsync();
-                  await dbc!.Database.EnsureCreatedAsync();
-              });
+    public virtual void ConfigureServices(ServiceCollection serviceCollection)
+    {
+        serviceCollection.AddSingleton<IPersistenceConfigurationProvider, TestConfigurationProvider>();
+        
+        Services.Configure(serviceCollection);
+    }
 
-        public virtual void ConfigureServices(ServiceCollection serviceCollection)
-        {
-            serviceCollection.AddSingleton<IPersistenceConfigurationProvider, TestConfigurationProvider>();
-            
-            Services.Configure(serviceCollection);
-        }
+    public async Task InScope(Func<BattleshipsDbContext, Task> action)
+    {
+        using var scope = ServiceProvider.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetService<BattleshipsDbContext>();
 
-        public async Task InScope(Func<BattleshipsDbContext, Task> action)
-        {
-            using var scope = ServiceProvider.CreateAsyncScope();
-            var dbContext = scope.ServiceProvider.GetService<BattleshipsDbContext>();
+        await action(dbContext!);
+    }
 
-            await action(dbContext!);
-        }
+    public void InScope(Action<BattleshipsDbContext> action)
+    {
+        using var scope = ServiceProvider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetService<BattleshipsDbContext>();
 
-        public void InScope(Action<BattleshipsDbContext> action)
-        {
-            using var scope = ServiceProvider.CreateScope();
-            var dbContext = scope.ServiceProvider.GetService<BattleshipsDbContext>();
+        action(dbContext!);
+    }
 
-            action(dbContext!);
-        }
-
-        public void Dispose()
-        {
-            InScope(dbc => dbc.Database.EnsureDeleted());
-            GC.SuppressFinalize(this);
-        }
+    public void Dispose()
+    {
+        InScope(dbc => dbc.Database.EnsureDeleted());
+        GC.SuppressFinalize(this);
     }
 }

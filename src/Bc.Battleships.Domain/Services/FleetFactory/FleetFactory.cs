@@ -3,65 +3,64 @@ using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Domain.ValueObjects.Enums;
 using Bc.Battleships.Domain.ValueObjects.GameContext;
 
-namespace Bc.Battleships.Domain.Services.FleetFactory
+namespace Bc.Battleships.Domain.Services.FleetFactory;
+
+internal class FleetFactory
 {
-    internal class FleetFactory
+    private readonly Random _random;
+    private readonly GameContext _gameContext;
+
+    public FleetFactory(GameContext gameContext, Random? random = null)
     {
-        private readonly Random _random;
-        private readonly GameContext _gameContext;
+        _gameContext = gameContext;
+        _random = random ?? Random.Shared;
+    }
 
-        public FleetFactory(GameContext gameContext, Random? random = null)
+    public IEnumerable<Ship> BuildAndPositionShips()
+    {
+        List<Ship> createdShips = [];
+
+        foreach (var shipBlueprint in _gameContext.ShipBlueprints)
         {
-            _gameContext = gameContext;
-            _random = random ?? Random.Shared;
+            createdShips.Add(BuildAndPositionShip(shipBlueprint, createdShips));
         }
 
-        public IEnumerable<Ship> BuildAndPositionShips()
+        return createdShips;
+    }
+
+    private Ship BuildAndPositionShip(ShipBlueprint shipBlueprint, List<Ship> createdShips)
+    {
+        List<Ship> candidates = [];
+        var boardSize = _gameContext.BoardSize.Value;
+        var length = shipBlueprint.Length.Value;
+
+        foreach (var layout in Enum.GetValues<ShipLayout>())
         {
-            var createdShips = new List<Ship>();
+            var maxColumn = layout == ShipLayout.Horizontal ? boardSize - length + 1 : boardSize;
+            var maxRow = layout == ShipLayout.Vertical ? boardSize - length + 1 : boardSize;
 
-            foreach (var shipBlueprint in _gameContext.ShipBlueprints)
+            for (var column = 1; column <= maxColumn; column++)
             {
-                createdShips.Add(BuildAndPositionShip(shipBlueprint, createdShips));
-            }
-
-            return createdShips;
-        }
-
-        private Ship BuildAndPositionShip(ShipBlueprint shipBlueprint, List<Ship> createdShips)
-        {
-            var candidates = new List<Ship>();
-            var boardSize = _gameContext.BoardSize.Value;
-            var length = shipBlueprint.Length.Value;
-
-            foreach (var layout in Enum.GetValues<ShipLayout>())
-            {
-                var maxColumn = layout == ShipLayout.Horizontal ? boardSize - length + 1 : boardSize;
-                var maxRow = layout == ShipLayout.Vertical ? boardSize - length + 1 : boardSize;
-
-                for (var column = 1; column <= maxColumn; column++)
+                for (var row = 1; row <= maxRow; row++)
                 {
-                    for (var row = 1; row <= maxRow; row++)
-                    {
-                        var ship = new Ship(new Coordinates(column, row), layout, shipBlueprint.Length);
+                    var ship = new Ship(new Coordinates(column, row), layout, shipBlueprint.Length);
 
-                        if (IsNotCollidingWith(ship, createdShips))
-                        {
-                            candidates.Add(ship);
-                        }
+                    if (IsNotCollidingWith(ship, createdShips))
+                    {
+                        candidates.Add(ship);
                     }
                 }
             }
-
-            if (candidates.Count == 0)
-            {
-                throw new FleetFactoryPositioningFailedException();
-            }
-
-            return candidates[_random.Next(candidates.Count)];
         }
 
-        private static bool IsNotCollidingWith(Ship ship, List<Ship> createdShips)
-            => createdShips.All(x => !x.IntersectsWith(ship));
+        if (candidates.Count == 0)
+        {
+            throw new FleetFactoryPositioningFailedException();
+        }
+
+        return candidates[_random.Next(candidates.Count)];
     }
+
+    private static bool IsNotCollidingWith(Ship ship, List<Ship> createdShips)
+        => createdShips.All(x => !x.IntersectsWith(ship));
 }

@@ -1,17 +1,6 @@
-namespace Bc.Battleships.Domain.ValueObjects
+namespace Bc.Battleships.Domain.ValueObjects;
+
+public readonly record struct GameId(Guid Value) : IGuidId
 {
-    public record GameId
-    {
-        public Guid Value { get; set; }
-
-        public GameId()
-        {
-            Value = Guid.NewGuid();
-        }
-
-        public GameId(Guid value)
-        {
-            Value = value;
-        }
-    }
+    public static GameId New() => new(Guid.NewGuid());
 }

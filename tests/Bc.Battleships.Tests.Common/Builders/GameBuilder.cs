@@ -3,32 +3,31 @@ using Bc.Battleships.Domain.AggregateRoots.Games.Players;
 using Bc.Battleships.Domain.ValueObjects;
 using Bc.Battleships.Tests.Common.Extensions;
 
-namespace Bc.Battleships.Tests.Common.Builders
+namespace Bc.Battleships.Tests.Common.Builders;
+
+public class GameBuilder
 {
-    public class GameBuilder
+    private ComputerPlayer? _computerPlayer = null;
+    private bool _shipsPositioned = true;
+    
+    public GameBuilder WithComputerPlayer(ComputerPlayer computerPlayer)
     {
-        private ComputerPlayer? _computerPlayer = null;
-        private bool _shipsPositioned = true;
-        
-        public GameBuilder WithComputerPlayer(ComputerPlayer computerPlayer)
-        {
-            _computerPlayer = computerPlayer;
-            return this;
-        }
+        _computerPlayer = computerPlayer;
+        return this;
+    }
 
-        public GameBuilder WithNotPositionedFleet()
-        {
-            _shipsPositioned = false;
-            return this;
-        }
+    public GameBuilder WithNotPositionedFleet()
+    {
+        _shipsPositioned = false;
+        return this;
+    }
 
-        public Game Build()
-        {
-            _computerPlayer ??= new ComputerPlayerBuilder()
-                .WithFleetPositioned(_shipsPositioned)
-                .Build();
+    public Game Build()
+    {
+        _computerPlayer ??= new ComputerPlayerBuilder()
+            .WithFleetPositioned(_shipsPositioned)
+            .Build();
 
-            return new Game(new GameId(), _computerPlayer);
-        }
+        return new Game(GameId.New(), _computerPlayer);
     }
 }

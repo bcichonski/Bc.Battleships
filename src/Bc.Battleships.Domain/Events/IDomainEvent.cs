@@ -1,8 +1,6 @@
-using Bc.Battleships.Messages;
 
-namespace Bc.Battleships.Domain.Events
+namespace Bc.Battleships.Domain.Events;
+
+public interface IDomainEvent : IEvent
 {
-    public interface IDomainEvent : IEvent
-    {
-    }
 }

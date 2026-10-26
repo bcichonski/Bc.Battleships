@@ -23,9 +23,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Bc.Battleships\Bc.Battleships.csproj" />
-    <ProjectReference Include="..\..\src\Bc.Battleships.Messages\Bc.Battleships.Messages.csproj" />
-    <ProjectReference Include="..\..\src\Bc.Battleships.Persistence\Bc.Battleships.Persistence.csproj" />
-    <ProjectReference Include="..\..\src\Bc.Battleships.Server\Bc.Battleships.Server.csproj" />
+    <ProjectReference Include="..\..\src\Bc.Battleships.Application\Bc.Battleships.Application.csproj" />
+    <ProjectReference Include="..\..\src\Bc.Battleships.Infrastructure\Bc.Battleships.Infrastructure.csproj" />
     <ProjectReference Include="..\Bc.Battleships.Tests.Common\Bc.Battleships.Tests.Common.csproj" />
   </ItemGroup>
 

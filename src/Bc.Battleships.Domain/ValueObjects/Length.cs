@@ -1,19 +1,18 @@
 using Bc.Battleships.Domain.ValueObjects.Exceptions;
 
-namespace Bc.Battleships.Domain.ValueObjects
+namespace Bc.Battleships.Domain.ValueObjects;
+
+public record Length
 {
-    public record Length
+    public int Value { get; }
+
+    public Length(int value)
     {
-        public int Value { get; }
-
-        public Length(int value)
+        if (value < 0)
         {
-            if (value < 0)
-            {
-                throw new NegativeLengthValueException();
-            }
-
-            Value = value;
+            throw new NegativeLengthValueException();
         }
+
+        Value = value;
     }
 }

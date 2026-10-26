@@ -1,40 +1,62 @@
 using AwesomeAssertions;
-using Bc.Battleships.Messages.Queries;
+using Bc.Battleships.Application.Queries;
+using Bc.Battleships.Domain.ValueObjects;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Bc.Battleships.Tests.Integration.API.Games
+namespace Bc.Battleships.Tests.Integration.API.Games;
+
+public class WhenRequestingGameState : ApiIntegrationTestBase
 {
-    public class WhenRequestingGameState : ApiIntegrationTestBase
+    [Fact]
+    public async Task ShouldReturnGameState()
     {
-        [Fact]
-        public async Task ShouldReturnGameState()
+        var game = await AssumeGameInDb();
+
+        await InScope(async testContext =>
         {
-            var game = await AssumeGameInDb();
-            var gameQuery = new GetCurrentGameQuery();
+            var result = await testContext.Mediator.Send(new GetGameQuery(game.Id), CancellationToken.None);
 
-            await InScope(async testContext =>
-            {
-                var result = await testContext.Mediator.Send(gameQuery, CancellationToken.None);
+            result.Game.Should().NotBeNull();
+            var dto = result.Game!;
+            dto.Id.Should().Be(game.Id.Value);
+            dto.IsGameActive.Should().BeTrue();
+            dto.CurrentHitPoints.Should().BeGreaterThan(0);
+            dto.Board.BoardSize.Should().Be(10);
+        });
+    }
 
-                result.IsGameActive.Should().BeTrue();
-                result.CurrentHitPoints.Should().BeGreaterThan(0);
-                result!.Board!.BoardSize.Should().Be(game.GameContext.BoardSize.Value);
-            });
-        }
+    [Fact]
+    public async Task ShouldReturnNoGameForUnknownId()
+    {
+        await AssumeGameInDb();
 
-        [Fact]
-        public async Task ShouldReturnGameStateWhenNoGameIsActive()
+        await InScope(async testContext =>
         {
-            var gameQuery = new GetCurrentGameQuery();
+            var result = await testContext.Mediator.Send(new GetGameQuery(new GameId(Guid.NewGuid())), CancellationToken.None);
 
-            await InScope(async testContext =>
-            {
-                var result = await testContext.Mediator.Send(gameQuery, CancellationToken.None);
+            result.Game.Should().BeNull();
+        });
+    }
 
-                result.IsGameActive.Should().BeFalse();
-            });
-        }
+    [Fact]
+    public async Task ShouldReturnInactiveGameWhenGameIsStopped()
+    {
+        var game = await AssumeGameInDb();
+        await InScope(async testContext =>
+        {
+            var stored = await testContext.GamesRepository.GetById(game.Id, CancellationToken.None);
+            stored!.Stop();
+            await testContext.DbContext.SaveChangesAsync();
+        });
+
+        await InScope(async testContext =>
+        {
+            var result = await testContext.Mediator.Send(new GetGameQuery(game.Id), CancellationToken.None);
+
+            result.Game!.IsGameActive.Should().BeFalse();
+        });
     }
 }

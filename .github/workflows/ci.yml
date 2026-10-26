@@ -30,19 +30,20 @@ jobs:
       - name: Build
         run: dotnet build Bc.Battleships.slnx -c Release --no-restore
 
-      - name: Test
-        run: dotnet test Bc.Battleships.slnx -c Release --no-build --collect "XPlat Code Coverage" --results-directory ./TestResults
-
       - name: Install ReportGenerator
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
-      - name: Generate coverage report
-        run: reportgenerator -reports:"TestResults/**/coverage.cobertura.xml" -targetdir:"CoverageReport" -reporttypes:"Html;MarkdownSummaryGithub"
+      # Runs the tests on the existing Release build, writes the report and enforces the coverage gate.
+      - name: Test and coverage gate
+        run: bash scripts/coverage.sh -c Release --no-build
 
       - name: Publish coverage summary
-        run: cat CoverageReport/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+        if: always()
+        run: |
+          [ -f CoverageReport/SummaryGithub.md ] && cat CoverageReport/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY" || true
 
       - name: Upload coverage report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report

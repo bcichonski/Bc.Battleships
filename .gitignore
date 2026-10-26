@@ -3,3 +3,7 @@ bin/
 obj/
 battleships.db*
 node_modules/
+
+# Test and coverage output (scripts/coverage.sh)
+TestResults/
+CoverageReport/

@@ -78,10 +78,18 @@ Backend, from the repository root:
 
 ```bash
 dotnet build
-dotnet test
+dotnet test Bc.Battleships.slnx
 ```
 
 `dotnet test` runs 115 tests: 77 domain unit tests, 11 database integration tests and 27 API integration tests (including the HTTP endpoint tests through `WebApplicationFactory`).
+
+Coverage gate, from the repository root:
+
+```bash
+bash scripts/coverage.sh
+```
+
+The script runs the tests with coverage collection, writes the results to `TestResults/` and the report to `CoverageReport/` (HTML, GitHub markdown summary and JSON summary), then fails if the filtered coverage is below 90 % line or 85 % branch. Generated code (Mediator, Microsoft, System), EF migrations and the test projects are excluded from the numbers. Override the thresholds with the `COVERAGE_MIN_LINE` and `COVERAGE_MIN_BRANCH` environment variables, and pass extra `dotnet test` arguments through, for example `bash scripts/coverage.sh -c Release --no-build`.
 
 Client, from `src/Bc.Battleships/ClientApp`:
 
@@ -105,7 +113,7 @@ This needs the .NET SDK and the Playwright Chromium browser (`npx playwright ins
 
 GitHub Actions (`.github/workflows/ci.yml`) runs on pushes to `main` and on every pull request:
 
-* **Backend**: builds and tests the solution, collects coverage and publishes a coverage report.
+* **Backend**: builds the solution, runs `scripts/coverage.sh` (tests, coverage report and the coverage gate) and publishes the coverage summary. The report is uploaded as an artifact even when the gate fails.
 * **Client**: `npm ci`, `npm run lint`, `npm run build` (includes the typecheck) and `npm test`.
 * **Client e2e**: sets up .NET (from `global.json`) and Node 22, installs Chromium and runs `npm run test:e2e`. The Playwright report is uploaded as an artifact when the job fails.
 

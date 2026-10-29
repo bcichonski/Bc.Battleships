@@ -103,9 +103,11 @@ Regenerate the EF migration only if the model changes; the 2022 migration still 
 
 ## Phase 5 – Optional / stretch (#5)
 
-- Two-sided game (the computer shoots back, with a hunt/target AI)
-- Dockerfile + GHCR image; optional .NET Aspire AppHost for local orchestration
-- Deploy a public demo (Azure Container Apps / Fly.io) as a portfolio piece
+- [x] Containerization: `Dockerfile`, `compose.yaml` and a CI job that builds the image (done in #5)
+- Deferred, moved out of #5: GHCR image publishing
+- Deferred, moved out of #5: two-sided game (the computer shoots back, with a hunt/target AI)
+- Deferred, moved out of #5: optional .NET Aspire AppHost for local orchestration
+- Deferred, moved out of #5: public demo deployment (Azure Container Apps / Fly.io) as a portfolio piece
 
 ---
 

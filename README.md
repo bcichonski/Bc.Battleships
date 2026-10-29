@@ -72,6 +72,27 @@ Production is unchanged: `dotnet publish` runs `npm run build` and copies `Clien
 
 To run from Visual Studio or Rider, open `Bc.Battleships.slnx` and start the `Bc.Battleships` profile. This starts the backend only, so start the client with `npm run dev` as well.
 
+## Run with Docker
+
+The `Dockerfile` builds the client and the backend into one image that serves the game on port 8080. From the repository root:
+
+```bash
+docker build -t bc-battleships .
+docker compose up
+```
+
+Open http://localhost:8080. Data is kept in the `battleships-data` named volume, mounted at `/data`, so it survives restarts. `docker compose down -v` deletes the volume and the data with it.
+
+* `ConnectionStrings__ConnectionString`: the SQLite connection string (default `Data Source=/data/battleships.db`).
+* `ASPNETCORE_HTTP_PORTS`: the port the app listens on inside the container (default `8080`).
+* `/healthz`: health endpoint, returns `200` when the app is up.
+
+End-to-end check of the image, from the repository root: it builds and starts the container, plays a game, restarts the container and checks that the game survived on the volume:
+
+```bash
+bash scripts/docker-smoke.sh
+```
+
 ## Running the tests
 
 Backend, from the repository root:

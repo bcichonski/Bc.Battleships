@@ -1,0 +1,11 @@
+services:
+  battleships:
+    build: .
+    image: bc-battleships
+    ports:
+      - "8080:8080"
+    volumes:
+      - battleships-data:/data
+
+volumes:
+  battleships-data:

@@ -18,6 +18,9 @@ public static class Services
             .BindConfiguration(GameOptions.SectionName)
             .ValidateOnStart();
 
+        // Liveness only: no dependency checks, so the container probe reflects process health.
+        serviceCollection.AddHealthChecks();
+
         serviceCollection.AddOpenApi(options =>
             options.AddDocumentTransformer((document, _, _) =>
             {

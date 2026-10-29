@@ -1,0 +1,15 @@
+**/node_modules
+**/bin
+**/obj
+**/ClientApp/build
+**/test-results
+**/playwright-report
+**/TestResults
+**/CoverageReport
+**/*.db
+**/*.db-*
+.git
+.vs
+.claude
+tests
+docs

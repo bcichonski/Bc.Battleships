@@ -28,6 +28,8 @@ public static class App
         }
 
         app.MapGameEndpoints();
+        // Mapped before the SPA fallback so the probe never resolves to index.html.
+        app.MapHealthChecks("/healthz");
 
         app.MapFallbackToFile("index.html");
     }

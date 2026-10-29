@@ -13,9 +13,11 @@ public static class App
         {
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
+            // Not in Development: the Vite dev proxy forwards to the HTTP URL, and a redirect to HTTPS
+            // would send the browser to another origin.
+            app.UseHttpsRedirection();
         }
 
-        app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseRouting();
 

@@ -47,6 +47,10 @@ relevant changelog entries when planning related work.
 | `sql` | adds EF Core entities, migrations, or schema changes |
 | `domain` | adds or modifies domain entities, value objects, or domain logic |
 | `feature-toggle` | adds a new feature flag key |
+| `ci` | changes the CI workflows or repository automation |
+| `tests` | adds or changes test infrastructure as a primary deliverable |
+| `client` | changes the React client in `ClientApp` |
+| `docker` | changes the container image or compose setup |
 
 ---
 
